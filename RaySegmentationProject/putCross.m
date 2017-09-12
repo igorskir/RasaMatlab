@@ -1,7 +1,7 @@
 function [ img ] = putCross( img,x,y )
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
-
+% comment
 %x=uint8(x);
 %y=uint8(y);
 dims=size(img);
