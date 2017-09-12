@@ -1,0 +1,9 @@
+## Ignore Matlab temporary files, data, and another files
+
+#Data-files
+*.dcm
+*.dicom
+*.nrrd
+
+#Data-folders
+Data/

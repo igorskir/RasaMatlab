@@ -1,1 +1,4 @@
 In this branch we store our main projects
+Hi all!
+You need to read this manual: 
+https://habrahabr.ru/post/106912/
