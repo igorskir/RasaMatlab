@@ -1,9 +1,8 @@
-function [ ray ] = Ray( image3D, x0,y0,z0, fi, tetta, delta)
+function [ ray ] = Ray(image3D,x0,y0,z0, fi, tetta, delta)
 %image3D - 3D image matrix
 %x0 y0 z0 - start point 
 % fi and tetta - ray direction in polar coord system
 % delta - step of choosing points along the ray
-
 
 dx=delta*sin(tetta)*cos(fi); % projection step on each dimension 
 dy=-delta*sin(tetta)*sin(fi);%

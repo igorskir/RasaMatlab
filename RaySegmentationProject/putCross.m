@@ -1,9 +1,12 @@
 function [ img ] = putCross( img,x,y )
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
-% comment
-%x=uint8(x);
-%y=uint8(y);
+
+x=round(x);
+y=round(y);
+if(x<=0 || y<=0 || x>size(img,2) || y>size(img,1))
+    return;
+end;
 dims=size(img);
 for t=1:5%put the cross
     if rem(t,2)
