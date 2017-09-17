@@ -1,31 +1,57 @@
-function [ img ] = putCross( img,x,y )
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
-
-x=round(x);
-y=round(y);
-if(x<=0 || y<=0 || x>size(img,2) || y>size(img,1))
-    return;
-end;
+function [ img ] = putCross( img, startPoint )
+%this function draw the cross on 3D or 2D image. 
+% img - input image
+% start point has to be declared as coord array: [x0 y0 z0]
+startPoint=round(startPoint); % round coords if they were double 
 dims=size(img);
-for t=1:5%put the cross
-    if rem(t,2)
-        c=255;
+if(numel(dims)~=numel(startPoint))
+    error('Dimension mismatch! point and input image must have the same dimensions.');
+end
+is3D=0;
+if (numel(dims==3)) % process image as 3D else 2D by default
+    is3D=1; 
+end
+x0=startPoint(1);
+y0=startPoint(2);
+if(is3D)
+    z0=startPoint(3);
+    if(not(z0>0 && z0<=dims(3))) % if Z coord is out of range
+        return;
+    end
+end
+
+if(not(x0>0 && x0<=dims(1) && y0>0 && y0<=dims(2))) % if X or Y out of range
+    return;
+end
+for t=-5:5%put the cross size 5 pixels 
+    if rem(t,2) % choosing color black/white
+        c=255; % if odd or even its distance from cross center
     else
         c=0;
     end
-   if (x+t<=dims(2))
-       img(y,x+t)=c; 
-   end
-   if (x-t>=1)
-       img(y,x-t)=c; 
-   end
-   if (y+t<=dims(1)) 
-       img(y+t,x)=c; 
-   end
-   if (y-t>=1) 
-       img(y-t,x)=c; 
-   end
+    if(is3D==0) 
+       x=x0+t;
+       if(x>0 && x<=dims(1))
+           img(x,y0)=c;
+       end
+       y=y0+t;
+       if(y>0 && y<=dims(2))
+           img(x0,y)=c;
+       end
+    else
+       x=x0+t;
+       if(x>0 && x<=dims(1))
+           img(x,y0,z0)=c;
+       end
+       y=y0+t;
+       if(y>0 && y<=dims(2))
+           img(x0,y,z0)=c;
+       end 
+       z=z0+t;
+       if(z>0 && z<=dims(3))
+           img(x0,y0,z)=c;
+       end 
+    end
 end
 end
 

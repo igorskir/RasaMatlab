@@ -7,8 +7,8 @@ function [ ray ] = Ray(image3D,startPoint, fi, tetta, delta)
 x0=startPoint(1); % extracting values...
 y0=startPoint(2);
 z0=startPoint(3);
-dx=delta*sin(tetta)*cos(fi); % projection step along the ray on each axis 
-dy=-delta*sin(tetta)*sin(fi);% 
+dx=delta*sin(tetta)*cos(fi); % projection step along t on each axis 
+dy=-delta*sin(tetta)*sin(fi);%
 dz=delta*cos(tetta);%
 dims=size(image3D); % size of input image
 
@@ -45,7 +45,7 @@ end
 N=min([Nx Ny Nz]);% choosing the minimal length from all dims
 ray=zeros(N,1); % creating output ray
 
-for i=0:N-1 % filling the output ray by choosing the closest voxel value
+for i=0:N-1
     x=round(x0+dx*i);
     y=round(y0+dy*i);
     z=round(z0+dz*i);
