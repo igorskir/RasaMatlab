@@ -1,6 +1,6 @@
 function [ ray ] = Ray(image3D,startPoint, fi, tetta, delta)
 %image3D - 3D image matrix
-%x0 y0 z0 - start point 
+%[x0 y0 z0] - start point 
 % fi and tetta - ray direction in polar coord system
 % delta - step of choosing points along the ray
 
@@ -42,8 +42,9 @@ else
     end
 end
 
-N=min([Nx Ny Nz]);% choosing the minimal length from all dims
+N=min([Nx Ny Nz])-5;% choosing the minimal length from all dims
 ray=zeros(N,1); % creating output ray
+
 
 for i=0:N-1 % filling the output ray by choosing the closest voxel value
     x=round(x0+dx*i);

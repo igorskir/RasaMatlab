@@ -23,7 +23,7 @@ end
 if(not(x0>0 && x0<=dims(1) && y0>0 && y0<=dims(2))) % if X or Y out of range
     return;
 end
-for t=-5:5%put the cross size 5 pixels 
+for t=-2:2%put the cross size 5 pixels 
     if rem(t,2) % choosing color black/white
         c=255; % if odd or even its distance from cross center
     else
@@ -32,24 +32,24 @@ for t=-5:5%put the cross size 5 pixels
     if(is3D==0) 
        x=x0+t;
        if(x>0 && x<=dims(1))
-           img(x,y0)=c;
+           img(y0,x)=c;
        end
        y=y0+t;
        if(y>0 && y<=dims(2))
-           img(x0,y)=c;
+           img(y,x0)=c;
        end
     else
        x=x0+t;
        if(x>0 && x<=dims(1))
-           img(x,y0,z0)=c;
+           img(y0,x,z0)=c;
        end
        y=y0+t;
        if(y>0 && y<=dims(2))
-           img(x0,y,z0)=c;
+           img(y,x0,z0)=c;
        end 
        z=z0+t;
        if(z>0 && z<=dims(3))
-           img(x0,y0,z)=c;
+           %img(y0,x0,z)=c;
        end 
     end
 end
