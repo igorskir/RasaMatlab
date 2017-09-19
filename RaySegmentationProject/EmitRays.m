@@ -35,16 +35,16 @@ for tetta=0:dTetta:pi
         end
     end
 end
-avg=mean(squeeze(points(:,4))); % calculating average intensity
-dev=std(squeeze(points(:,4))); % and standard deviation for border points
-i=1;
-while (i<=size(points,1)) % drop out points with intensity out of range [avg-3*dev .. avg+3*dev]
-    if(abs(points(i,4)-avg)>=dev) 
-        points(i,:)=[]; 
-    else
-        i=i+1;
-    end
-end
+% avg=mean(squeeze(points(:,4))); % calculating average intensity
+% dev=std(squeeze(points(:,4))); % and standard deviation for border points
+% i=1;
+% while (i<=size(points,1)) % drop out points with intensity out of range [avg-3*dev .. avg+3*dev]
+%     if(abs(points(i,4)-avg)>=dev) 
+%         points(i,:)=[]; 
+%     else
+%         i=i+1;
+%     end
+% end
 pointCount=size(points,1);
 distances=zeros(pointCount); %matrix of distances between points. distance(i,j)-distance between I-th and J-th
 for i=1:pointCount
@@ -61,13 +61,13 @@ for i=1:pointCount
         distances(j,i)=distances(i,j); % symmetry mapping
     end
 end
-[maxDist, maxIndex]=max(min(distances)); % detecting the furthest point
+% [maxDist, maxIndex]=max(min(distances)); % detecting the furthest point
 %maxDist 
 % BELOW: calculations of new start point coords and calling  THIS func
 % recursively 
-nextCenter=[(x+points(maxIndex,1))/2, (y+points(maxIndex,2))/2, (z+points(maxIndex,3))/2];
-if(maxDist>35)
-    EmitRays(image3D,points,nextCenter,dTetta,dFi,[]);
-end
+% nextCenter=[(x+points(maxIndex,1))/2, (y+points(maxIndex,2))/2, (z+points(maxIndex,3))/2];
+% if(maxDist>35)
+%     EmitRays(image3D,points,nextCenter,dTetta,dFi,[]);
+% end
 end
 
