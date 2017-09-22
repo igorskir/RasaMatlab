@@ -6,7 +6,7 @@ imtool close all;
 %% Reading MRI images
 functionPath = fullfile(pwd, 'Medical Image Reader and Viewer'); 
 addpath(functionPath); 
-fileFolder = fullfile(pwd, 'Gorohov'); 
+fileFolder = fullfile(pwd, 'GORO'); 
 CT = readImages(fileFolder); 
 %---- end reading
 
@@ -21,9 +21,9 @@ p = twomodegauss(0.1, 0.05, 0.3, 0.05, 1, 0.07, 0.002);
 
 %% Setting  parameters
 points=[];
-startPoint=[245, 215, 51];
-dTetta=pi/2;
-dFi=pi/16;
+startPoint=[225, 225, 51];
+dTetta=pi/8;
+dFi=pi/8;
 
 %% Ray generation and processing
 points=EmitRays(double(image3D),points,startPoint,dTetta,dFi,[]);
@@ -34,8 +34,5 @@ for i=1:size(points,1)
 end
 
 %% Show the results
-%implay(image3D,2);
+implay(image3D,5);
 imtool(squeeze(image3D(:,:,startPoint(3))));
-K = convhulln(points(:,1:3));
-h=trisurf(K,points(:,1),points(:,2),points(:,3));
-set(h,'FaceColor','none');

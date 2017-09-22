@@ -16,7 +16,7 @@ if(dx>0) % calculating size of output vector for each dim
    Nx=floor((dims(2)-x0)/dx);
 else
     if(dx<0)
-        Nx=floor(x0/abs(dx));
+        Nx=floor((x0-1)/abs(dx));
     else
         Nx=9999;
     end
@@ -26,7 +26,7 @@ if(dy>0)
    Ny=floor((dims(1)-y0)/dy);
 else
     if(dy<0)
-        Ny=floor(y0/abs(dy));
+        Ny=floor((y0-1)/abs(dy));
     else
         Ny=99999;
     end
@@ -36,13 +36,13 @@ if(dz>0)
    Nz=floor((dims(3)-z0)/dz);
 else
     if(dz<0)
-        Nz=floor(z0/abs(dz));
+        Nz=floor((z0-1)/abs(dz));
     else
         Nz=99999;
     end
 end
 
-N=min([Nx Ny Nz])-5;% choosing the minimal length from all dims
+N=min([Nx Ny Nz])-1;% choosing the minimal length from all dims
 ray=zeros(N,1); % creating output ray
 
 

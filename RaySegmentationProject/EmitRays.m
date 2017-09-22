@@ -10,16 +10,17 @@ x0=startPoint(1); % extracting values...
 y0=startPoint(2);
 z0=startPoint(3);
 %params for border detection
-level=13; % condition for linear approximation coeffs
+level=2.5; % condition for linear approximation coeffs
 width=4; % width of a window for calculating approximation coeffs
 delta=1;
+maxDist=10.5;
 
 for tetta=0:dTetta:pi
     for fi=0:dFi:(2*pi-dFi) 
         % here we need to check current [tetta fi] if its not excepted direction
         % not released yet
         ray=Ray(image3D, startPoint,fi,tetta,delta); % creating ray for current direction
-        borderIndex=GetBorder(ray,delta,width,level); % looking for a border
+        borderIndex=GetBorder(ray,delta,width,level,maxDist); % looking for a border
         if(borderIndex==-1)
                continue;
         end
@@ -29,7 +30,7 @@ for tetta=0:dTetta:pi
         x=round(x0+dx*borderIndex);
         y=round(y0+dy*borderIndex);
         z=round(z0+dz*borderIndex);
-        points(size(points,1)+1,:)=[x y z image3D(x,y,z) tetta fi];
+        points(size(points,1)+1,:)=[x y z image3D(x,y,z)];
         if(tetta==0 || tetta==pi) % for this values enough first iteration
             break;
         end
