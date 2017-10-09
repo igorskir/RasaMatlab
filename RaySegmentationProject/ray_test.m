@@ -6,7 +6,7 @@ imtool close all;
 %% Reading MRI images
 functionPath = fullfile(pwd, 'Medical Image Reader and Viewer'); 
 addpath(functionPath); 
-fileFolder = fullfile(pwd, 'Gorohov'); 
+fileFolder = fullfile(pwd, 'Data'); 
 CT = readImages(fileFolder); 
 %---- end reading
 
@@ -36,6 +36,6 @@ end
 %% Show the results
 %implay(image3D,2);
 imtool(squeeze(image3D(:,:,startPoint(3))));
-K = convhulln(points(:,1:3));
-h=trisurf(K,points(:,1),points(:,2),points(:,3));
-set(h,'FaceColor','none');
+%K = convhulln(points(:,1:3));
+%h=trisurf(K,points(:,1),points(:,2),points(:,3));
+%set(h,'FaceColor','none');

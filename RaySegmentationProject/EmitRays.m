@@ -15,7 +15,7 @@ width=4; % width of a window for calculating approximation coeffs
 delta=1;
 maxDist=10.5;
 
-for tetta=0:dTetta:pi
+for tetta=pi/2:dTetta:pi/2
     for fi=0:dFi:(2*pi-dFi) 
         % here we need to check current [tetta fi] if its not excepted direction
         % not released yet

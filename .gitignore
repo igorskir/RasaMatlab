@@ -4,6 +4,7 @@
 *.dcm
 *.dicom
 *.nrrd
+*.asv
 
 #Data-folders
 Data/
