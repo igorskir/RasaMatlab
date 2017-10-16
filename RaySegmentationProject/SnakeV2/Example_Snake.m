@@ -5,6 +5,8 @@ clc         %empty command window
 imtool close all;
 
 %% Create and open 2d medical image
+load Image3D
+%% wer
 image2D = image3D(:,:,52);
 imtool(image2D);
 
