@@ -1,0 +1,465 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Demo</title><meta name="generator" content="MATLAB 9.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-06-13"><meta name="DC.source" content="Demo.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">DEMO FILE</a></li></ul></div><pre class="codeinput"><span class="comment">%  Matlab Code-Library for Feature Selection</span>
+<span class="comment">%  A collection of S-o-A feature selection methods</span>
+<span class="comment">%  Version 4.2.17 April 2017</span>
+<span class="comment">%  Support: Giorgio Roffo</span>
+<span class="comment">%  E-mail: giorgio.roffo@glasgow.ac.uk</span>
+<span class="comment">%</span>
+<span class="comment">%  Before using the Code-Library, please read the Release Agreement carefully.</span>
+<span class="comment">%</span>
+<span class="comment">%  Release Agreement:</span>
+<span class="comment">%</span>
+<span class="comment">%  - All technical papers, documents and reports which use the Code-Library will acknowledge the use of the library as follows:</span>
+<span class="comment">%    &#8220;The research in this paper use the Feature Selection Code Library (FSLib)&#8221; and a citation to:</span>
+<span class="comment">%</span>
+<span class="comment">%  ------------------------------------------------------------------------</span>
+<span class="comment">% If you use this toolbox (or method included in it), please cite:</span>
+
+<span class="comment">%@article{roffo2017ranking,</span>
+<span class="comment">%  title={Ranking to Learn: Feature Ranking and Selection via Eigenvector Centrality},</span>
+<span class="comment">%  author={Roffo, Giorgio and Melzi, Simone},</span>
+<span class="comment">%  journal={New Frontiers in Mining Complex Patterns, Fifth International workshop, nfMCP2016},</span>
+<span class="comment">%  publisher={Springer - Lecture Notes in Computer Science},</span>
+<span class="comment">%  year={2017}</span>
+<span class="comment">%}</span>
+
+<span class="comment">% @INPROCEEDINGS{Roffo7410835,</span>
+<span class="comment">% author={G. Roffo and S. Melzi and M. Cristani},</span>
+<span class="comment">% booktitle={2015 IEEE International Conference on Computer Vision (ICCV)},</span>
+<span class="comment">% title={Infinite Feature Selection},</span>
+<span class="comment">% year={2015},</span>
+<span class="comment">% pages={4202-4210},</span>
+<span class="comment">% doi={10.1109/ICCV.2015.478},</span>
+<span class="comment">% month={Dec},}</span>
+<span class="comment">%  ------------------------------------------------------------------------</span>
+
+<span class="comment">% Important:</span>
+<span class="comment">% Before using the toolbox compile the solution:</span>
+<span class="comment">% Please note, you need a compiler on your platform already installed. The compiler is not part of this toolbox,</span>
+<span class="comment">% If you use Windows machines this can be added by installing MS Visual Studio 2015 (free from Microsoft).</span>
+<span class="comment">% If you use other platform you need to instal a valid c++ compiler x86 or x64 according to your architecture.</span>
+<span class="comment">% Note that / and \ in the path change along with the platform (Linux, Windows, MAC), so please open the make file and check before running it.</span>
+<span class="comment">% Then just run the make file below.</span>
+<span class="comment">% make;</span>
+</pre><h2 id="2">DEMO FILE</h2><pre class="codeinput">clear <span class="string">all</span>
+close <span class="string">all</span>
+clc;
+fprintf(<span class="string">'\nFEATURE SELECTION TOOLBOX v 4.0 2016 - For Matlab \n'</span>);
+<span class="comment">% Include dependencies</span>
+addpath(<span class="string">'./lib'</span>); <span class="comment">% dependencies</span>
+addpath(<span class="string">'./methods'</span>); <span class="comment">% FS methods</span>
+
+<span class="comment">% Select a feature selection method from the list</span>
+listFS = {<span class="string">'InfFS'</span>,<span class="string">'ECFS'</span>,<span class="string">'mrmr'</span>,<span class="string">'relieff'</span>,<span class="string">'mutinffs'</span>,<span class="string">'fsv'</span>,<span class="string">'laplacian'</span>,<span class="string">'mcfs'</span>,<span class="string">'rfe'</span>,<span class="string">'L0'</span>,<span class="string">'fisher'</span>,<span class="string">'UDFS'</span>,<span class="string">'llcfs'</span>,<span class="string">'cfs'</span>};
+
+[ methodID ] = readInput( listFS );
+selection_method = listFS{methodID}; <span class="comment">% Selected</span>
+
+<span class="comment">% Load the data and select features for classification</span>
+load <span class="string">fisheriris</span>
+X = meas; clear <span class="string">meas</span>
+<span class="comment">% Extract the Setosa class</span>
+Y = nominal(ismember(species,<span class="string">'setosa'</span>)); clear <span class="string">species</span>
+
+<span class="comment">% Randomly partitions observations into a training set and a test</span>
+<span class="comment">% set using stratified holdout</span>
+P = cvpartition(Y,<span class="string">'Holdout'</span>,0.20);
+
+X_train = double( X(P.training,:) );
+Y_train = (double( Y(P.training) )-1)*2-1; <span class="comment">% labels: neg_class -1, pos_class +1</span>
+
+X_test = double( X(P.test,:) );
+Y_test = (double( Y(P.test) )-1)*2-1; <span class="comment">% labels: neg_class -1, pos_class +1</span>
+
+<span class="comment">% number of features</span>
+numF = size(X_train,2);
+
+<span class="comment">% feature Selection on training data</span>
+<span class="keyword">switch</span> lower(selection_method)
+    <span class="keyword">case</span> <span class="string">'mrmr'</span>
+        ranking = mRMR(X_train, Y_train, numF);
+
+    <span class="keyword">case</span> <span class="string">'relieff'</span>
+        [ranking, w] = reliefF( X_train, Y_train, 20);
+
+    <span class="keyword">case</span> <span class="string">'mutinffs'</span>
+        [ ranking , w] = mutInfFS( X_train, Y_train, numF );
+
+    <span class="keyword">case</span> <span class="string">'fsv'</span>
+        [ ranking , w] = fsvFS( X_train, Y_train, numF );
+
+    <span class="keyword">case</span> <span class="string">'laplacian'</span>
+        W = dist(X_train');
+        W = -W./max(max(W)); <span class="comment">% it's a similarity</span>
+        [lscores] = LaplacianScore(X_train, W);
+        [junk, ranking] = sort(-lscores);
+
+    <span class="keyword">case</span> <span class="string">'mcfs'</span>
+        <span class="comment">% MCFS: Unsupervised Feature Selection for Multi-Cluster Data</span>
+        options = [];
+        options.k = 5; <span class="comment">%For unsupervised feature selection, you should tune</span>
+        <span class="comment">%this parameter k, the default k is 5.</span>
+        options.nUseEigenfunction = 4;  <span class="comment">%You should tune this parameter.</span>
+        [FeaIndex,~] = MCFS_p(X_train,numF,options);
+        ranking = FeaIndex{1};
+
+    <span class="keyword">case</span> <span class="string">'rfe'</span>
+        ranking = spider_wrapper(X_train,Y_train,numF,lower(selection_method));
+
+    <span class="keyword">case</span> <span class="string">'l0'</span>
+        ranking = spider_wrapper(X_train,Y_train,numF,lower(selection_method));
+
+    <span class="keyword">case</span> <span class="string">'fisher'</span>
+        ranking = spider_wrapper(X_train,Y_train,numF,lower(selection_method));
+
+    <span class="keyword">case</span> <span class="string">'inffs'</span>
+        <span class="comment">% Infinite Feature Selection 2015 updated 2016</span>
+        alpha = 0.5;    <span class="comment">% default, it should be cross-validated.</span>
+        sup = 1;        <span class="comment">% Supervised or Not</span>
+        [ranking, w] = infFS( X_train , Y_train, alpha , sup , 0 );
+
+    <span class="keyword">case</span> <span class="string">'ecfs'</span>
+        <span class="comment">% Features Selection via Eigenvector Centrality 2016</span>
+        alpha = 0.5; <span class="comment">% default, it should be cross-validated.</span>
+        ranking = ECFS( X_train, Y_train, alpha )  ;
+
+    <span class="keyword">case</span> <span class="string">'udfs'</span>
+        <span class="comment">% Regularized Discriminative Feature Selection for Unsupervised Learning</span>
+        nClass = 2;
+        ranking = UDFS(X_train , nClass );
+
+    <span class="keyword">case</span> <span class="string">'cfs'</span>
+        <span class="comment">% BASELINE - Sort features according to pairwise correlations</span>
+        ranking = cfs(X_train);
+
+    <span class="keyword">case</span> <span class="string">'llcfs'</span>
+        <span class="comment">% Feature Selection and Kernel Learning for Local Learning-Based Clustering</span>
+        ranking = llcfs( X_train );
+
+    <span class="keyword">otherwise</span>
+        disp(<span class="string">'Unknown method.'</span>)
+<span class="keyword">end</span>
+
+k = 2; <span class="comment">% select the first 2 features</span>
+
+<span class="comment">% Use a linear support vector machine classifier</span>
+svmStruct = svmtrain(X_train(:,ranking(1:k)),Y_train,<span class="string">'showplot'</span>,true);
+C = svmclassify(svmStruct,X_test(:,ranking(1:k)),<span class="string">'showplot'</span>,true);
+err_rate = sum(Y_test~= C)/P.TestSize; <span class="comment">% mis-classification rate</span>
+conMat = confusionmat(Y_test,C); <span class="comment">% the confusion matrix</span>
+
+fprintf(<span class="string">'\nMethod %s (Linear-SVMs): Accuracy: %.2f%%, Error-Rate: %.2f \n'</span>,selection_method,100*(1-err_rate),err_rate);
+
+
+
+<span class="comment">% MathWorks Licence</span>
+<span class="comment">% Copyright (c) 2016-2017, Giorgio Roffo</span>
+<span class="comment">% All rights reserved.</span>
+<span class="comment">%</span>
+<span class="comment">% Redistribution and use in source and binary forms, with or without</span>
+<span class="comment">% modification, are permitted provided that the following conditions are</span>
+<span class="comment">% met:</span>
+<span class="comment">%</span>
+<span class="comment">%     * Redistributions of source code must retain the above copyright</span>
+<span class="comment">%       notice, this list of conditions and the following disclaimer.</span>
+<span class="comment">%     * Redistributions in binary form must reproduce the above copyright</span>
+<span class="comment">%       notice, this list of conditions and the following disclaimer in</span>
+<span class="comment">%       the documentation and/or other materials provided with the distribution</span>
+<span class="comment">%     * Neither the name of the University of Verona nor the names</span>
+<span class="comment">%       of its contributors may be used to endorse or promote products derived</span>
+<span class="comment">%       from this software without specific prior written permission.</span>
+<span class="comment">%</span>
+<span class="comment">% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"</span>
+<span class="comment">% AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</span>
+<span class="comment">% IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</span>
+<span class="comment">% ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE</span>
+<span class="comment">% LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR</span>
+<span class="comment">% CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF</span>
+<span class="comment">% SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS</span>
+<span class="comment">% INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN</span>
+<span class="comment">% CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="comment">% ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="comment">% POSSIBILITY OF SUCH DAMAGE.</span>
+</pre><pre class="codeoutput">
+FEATURE SELECTION TOOLBOX v 4.0 2016 - For Matlab 
+Warning: Name is nonexistent or not a directory: .\lib 
+Warning: Name is nonexistent or not a directory: .\methods 
+Please, select a feature selection method from the list:
+[1] InfFS 
+[2] ECFS 
+[3] mrmr 
+[4] relieff 
+[5] mutinffs 
+[6] fsv 
+[7] laplacian 
+[8] mcfs 
+[9] rfe 
+[10] L0 
+[11] fisher 
+[12] UDFS 
+[13] llcfs 
+[14] cfs 
+</pre><pre class="codeoutput error">Error using input
+Cannot call INPUT from EVALC.
+
+Error in readInput (line 8)
+methodID = input('&gt; ');
+
+Error in Demo (line 57)
+[ methodID ] = readInput( listFS );
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%  Matlab Code-Library for Feature Selection
+%  A collection of S-o-A feature selection methods
+%  Version 4.2.17 April 2017
+%  Support: Giorgio Roffo
+%  E-mail: giorgio.roffo@glasgow.ac.uk
+%
+%  Before using the Code-Library, please read the Release Agreement carefully.
+%
+%  Release Agreement:
+%
+%  - All technical papers, documents and reports which use the Code-Library will acknowledge the use of the library as follows: 
+%    “The research in this paper use the Feature Selection Code Library (FSLib)” and a citation to:
+%  
+%  REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% If you use this toolbox (or method included in it), please cite:
+
+%@article{roffo2017ranking,
+%  title={Ranking to Learn: Feature Ranking and Selection via Eigenvector Centrality},
+%  author={Roffo, Giorgio and Melzi, Simone},
+%  journal={New Frontiers in Mining Complex Patterns, Fifth International workshop, nfMCP2016},
+%  publisher={Springer - Lecture Notes in Computer Science},
+%  year={2017}
+%}
+
+% @INPROCEEDINGS{Roffo7410835, 
+% author={G. Roffo and S. Melzi and M. Cristani}, 
+% booktitle={2015 IEEE International Conference on Computer Vision (ICCV)}, 
+% title={Infinite Feature Selection}, 
+% year={2015}, 
+% pages={4202-4210}, 
+% doi={10.1109/ICCV.2015.478}, 
+% month={Dec},}
+%  REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+
+% Important:
+% Before using the toolbox compile the solution:
+% Please note, you need a compiler on your platform already installed. The compiler is not part of this toolbox,
+% If you use Windows machines this can be added by installing MS Visual Studio 2015 (free from Microsoft).
+% If you use other platform you need to instal a valid c++ compiler x86 or x64 according to your architecture.
+% Note that / and \ in the path change along with the platform (Linux, Windows, MAC), so please open the make file and check before running it.
+% Then just run the make file below.
+% make;
+
+
+%% DEMO FILE
+clear all
+close all
+clc;
+fprintf('\nFEATURE SELECTION TOOLBOX v 4.0 2016 - For Matlab \n');
+% Include dependencies
+addpath('./lib'); % dependencies
+addpath('./methods'); % FS methods
+
+% Select a feature selection method from the list
+listFS = {'InfFS','ECFS','mrmr','relieff','mutinffs','fsv','laplacian','mcfs','rfe','L0','fisher','UDFS','llcfs','cfs'};
+
+[ methodID ] = readInput( listFS );
+selection_method = listFS{methodID}; % Selected
+
+% Load the data and select features for classification
+load fisheriris
+X = meas; clear meas
+% Extract the Setosa class
+Y = nominal(ismember(species,'setosa')); clear species
+
+% Randomly partitions observations into a training set and a test
+% set using stratified holdout
+P = cvpartition(Y,'Holdout',0.20);
+
+X_train = double( X(P.training,:) );
+Y_train = (double( Y(P.training) )-1)*2-1; % labels: neg_class -1, pos_class +1
+
+X_test = double( X(P.test,:) );
+Y_test = (double( Y(P.test) )-1)*2-1; % labels: neg_class -1, pos_class +1
+
+% number of features
+numF = size(X_train,2);
+
+% feature Selection on training data
+switch lower(selection_method)
+    case 'mrmr'
+        ranking = mRMR(X_train, Y_train, numF);
+        
+    case 'relieff'
+        [ranking, w] = reliefF( X_train, Y_train, 20);
+        
+    case 'mutinffs'
+        [ ranking , w] = mutInfFS( X_train, Y_train, numF );
+        
+    case 'fsv'
+        [ ranking , w] = fsvFS( X_train, Y_train, numF );
+        
+    case 'laplacian'
+        W = dist(X_train');
+        W = -W./max(max(W)); % it's a similarity
+        [lscores] = LaplacianScore(X_train, W);
+        [junk, ranking] = sort(-lscores);
+        
+    case 'mcfs'
+        % MCFS: Unsupervised Feature Selection for Multi-Cluster Data
+        options = [];
+        options.k = 5; %For unsupervised feature selection, you should tune
+        %this parameter k, the default k is 5.
+        options.nUseEigenfunction = 4;  %You should tune this parameter.
+        [FeaIndex,~] = MCFS_p(X_train,numF,options);
+        ranking = FeaIndex{1};
+        
+    case 'rfe'
+        ranking = spider_wrapper(X_train,Y_train,numF,lower(selection_method));
+        
+    case 'l0'
+        ranking = spider_wrapper(X_train,Y_train,numF,lower(selection_method));
+        
+    case 'fisher'
+        ranking = spider_wrapper(X_train,Y_train,numF,lower(selection_method));
+        
+    case 'inffs'
+        % Infinite Feature Selection 2015 updated 2016
+        alpha = 0.5;    % default, it should be cross-validated.
+        sup = 1;        % Supervised or Not
+        [ranking, w] = infFS( X_train , Y_train, alpha , sup , 0 );    
+        
+    case 'ecfs'
+        % Features Selection via Eigenvector Centrality 2016
+        alpha = 0.5; % default, it should be cross-validated.
+        ranking = ECFS( X_train, Y_train, alpha )  ;
+        
+    case 'udfs'
+        % Regularized Discriminative Feature Selection for Unsupervised Learning
+        nClass = 2;
+        ranking = UDFS(X_train , nClass ); 
+        
+    case 'cfs'
+        % BASELINE - Sort features according to pairwise correlations
+        ranking = cfs(X_train);     
+        
+    case 'llcfs'   
+        % Feature Selection and Kernel Learning for Local Learning-Based Clustering
+        ranking = llcfs( X_train );
+        
+    otherwise
+        disp('Unknown method.')
+end
+
+k = 2; % select the first 2 features
+
+% Use a linear support vector machine classifier
+svmStruct = svmtrain(X_train(:,ranking(1:k)),Y_train,'showplot',true);
+C = svmclassify(svmStruct,X_test(:,ranking(1:k)),'showplot',true);
+err_rate = sum(Y_test~= C)/P.TestSize; % mis-classification rate
+conMat = confusionmat(Y_test,C); % the confusion matrix
+
+fprintf('\nMethod %s (Linear-SVMs): Accuracy: %.2f%%, Error-Rate: %.2f \n',selection_method,100*(1-err_rate),err_rate);
+
+
+
+% MathWorks Licence
+% Copyright (c) 2016-2017, Giorgio Roffo
+% All rights reserved.
+% 
+% Redistribution and use in source and binary forms, with or without
+% modification, are permitted provided that the following conditions are
+% met:
+% 
+%     * Redistributions of source code must retain the above copyright
+%       notice, this list of conditions and the following disclaimer.
+%     * Redistributions in binary form must reproduce the above copyright
+%       notice, this list of conditions and the following disclaimer in
+%       the documentation and/or other materials provided with the distribution
+%     * Neither the name of the University of Verona nor the names
+%       of its contributors may be used to endorse or promote products derived
+%       from this software without specific prior written permission.
+% 
+% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+% AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+% IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+% ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+% LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+% CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+% SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+% INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+% CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+% ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+% POSSIBILITY OF SUCH DAMAGE.
+
+##### SOURCE END #####
+--></body></html>
