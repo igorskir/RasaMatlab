@@ -3,7 +3,7 @@
 clear all; close all; clc;
 
 % Initial variables
-isNormalize = 1;
+isNormalize = 0;
 numFeats = 18; % 5, 9, 11, 18
 
 % Load the data
@@ -15,6 +15,7 @@ elseif isNormalize == 0
     load('targets');
 end
 
+% t = netTrainTargetsNorm';
 x = netSelectInputs';
 % x = netTrainInputs';
 t = netTrainTargets';
