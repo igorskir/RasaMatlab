@@ -1,13 +1,13 @@
 function overlap = GetIntersection(v1, v2, varargin)
     
     try
-        defEpsilon = 0.01;
+        defaultEpsilon = 0.01;
         overlap = 0;
         possibleCombs = numel(v1)*numel(v2);
 
         switch nargin
             case 2
-                epsilon = defEpsilon;
+                epsilon = defaultEpsilon;
             case 3
                 epsilon = varargin{1,1};
             otherwise

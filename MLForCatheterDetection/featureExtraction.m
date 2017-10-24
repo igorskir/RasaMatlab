@@ -11,7 +11,7 @@ isFill = 0;
 nTimeframe = 1; %9
 %XLS reading
 cathDataFile = 'D:\Clouds\Google Drive\RASA\Matlab\12. Catheter ML\Presentation\LV Catheter 07.xlsx';
-sheet = 1;
+sheet = 'Sheet1';
 xlRange = 'C7:S8';
 cathData = xlsread(cathDataFile,sheet,xlRange);
 minSlice = cathData(1,nTimeframe);

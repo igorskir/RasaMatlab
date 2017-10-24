@@ -85,8 +85,8 @@ numLayers = numel(hiddenLayerSize);
 switch netType
     case 'feed-forward'
         net = patternnet(hiddenLayerSize, trainFcn, performFcn);
-        net.layers{numLayers+1}.transferFcn = 'logsig';   
-%         net.layers{numLayers+1}.transferFcn = 'tansig';      
+%         net.layers{numLayers+1}.transferFcn = 'logsig';   
+        net.layers{numLayers+1}.transferFcn = 'tansig';      
     case 'cascade'
         net = cascadeforwardnet(hiddenLayerSize,trainFcn);
         net.layers{numLayers+1}.transferFcn = 'tansig';        
