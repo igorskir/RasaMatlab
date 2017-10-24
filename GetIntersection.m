@@ -22,14 +22,14 @@ function overlap = GetIntersection(v1, v2, varargin)
             
     end
     
-    % sort array elemnts for algorithms optimization
+    % Sort array elemnts for algorithms optimization
     v1 = sort(v1);
     v2 = sort(v2);
 
     for i = 1:numel(v1)
        for j = 1:numel(v2)           
             maxVal = max(v1(i), v2(j));         
-            if ( abs(v1(i) - v2(j))/maxVal ) < epsilon
+            if (abs(v1(i) - v2(j))/maxVal) < epsilon
                 overlap = overlap + 1;   
             else
                break; 
