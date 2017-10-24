@@ -4,7 +4,8 @@ set(0, 'DefaultFigureWindowStyle', 'normal');
 currentFolder = pwd;
 addpath(genpath(pwd));
 isGetDistance = 0;
-isNormalize = 0;
+isNormalize = 1;
+
 %% Load the data            
 dataTraining = struct('Presence', [], ...
                       'Area', [], ...
@@ -27,8 +28,8 @@ dataTraining = struct('Presence', [], ...
                       'MinorAxisLength', []);
 
 % Load training data
-% trainingFolder = strcat(currentFolder, '\Labeled data\LV Catheter 07 v.3 (18 features)\Training');
-trainingFolder = strcat(currentFolder, '\Labeled data\LV Catheter 07 v.4 (18 features)\Training');
+trainingFolder = strcat(currentFolder, '\Labeled data\LV Catheter 07 v.3 (18 features)\Training');
+% trainingFolder = strcat(currentFolder, '\Labeled data\LV Catheter 07 v.4 (18 features)\Training');
 cd(trainingFolder);
 s = what;
 matfiles = s.mat;
@@ -53,7 +54,8 @@ clear(vars.removingNaNs{:});
 
 %% Get normalized data
 if isNormalize == 1
-    dataTrainingNorm = robustNormalization(dataTraining, 'quantile'); % quartile, std, mean, linear
+    temp = struct2mat(dataTraining);
+    dataTrainingNorm = robustNormalization(temp, 'quantile', 0); % quartile, std, mean, linear
     numFields = numel(fieldnames(dataTraining));
     dataTissueNorm = zeros(1, numFields, 'double');
     dataCatheterNorm = zeros(1, numFields, 'double');
@@ -69,7 +71,7 @@ if isNormalize == 1
     netTrainInputsNorm(:,1) = [];
     dataCatheterNorm(1,:) = [];
     dataTissueNorm(1,:) = [];
-    vars.normalization = {'numFields', 'dataTemp', 'i'};
+    vars.normalization = {'numFields', 'dataTemp', 'i', 'temp'};
     clear(vars.normalization{:});
 end
 
@@ -94,46 +96,51 @@ if exist('isGetDistance', 'var') == 1
     clear isGetDistance;
 end
 
+%% Get not normalized data
+if isNormalize == 0
+    dataTraining = struct2cell(dataTraining.').';
+    inputTrainStruct = struct('Area', dataTraining(1:end,2), ...
+                              'ConvexArea', dataTraining(1:end,3), ...
+                              'Perimeter', dataTraining(1:end,4), ...
+                              'Eccentricity', dataTraining(1:end,5), ...
+                              'Solidity', dataTraining(1:end,6), ...
+                              'Extent', dataTraining(1:end,7), ...
+                              'EquivDiameter', dataTraining(1:end,8), ...
+                              'MaxIntensity', dataTraining(1:end,9), ...
+                              'MeanIntensity', dataTraining(1:end,10), ...
+                              'MinIntensity', dataTraining(1:end,11), ...
+                              'Variance', dataTraining(1:end,12), ...
+                              'StandardDeviation', dataTraining(1:end,13), ...
+                              'Contrast', dataTraining(1:end,14), ...
+                              'Correlation', dataTraining(1:end,15), ...
+                              'Energy', dataTraining(1:end,16), ...
+                              'Homogeneity', dataTraining(1:end,17), ...
+                              'MajorAxisLength', dataTraining(1:end,18), ...
+                              'MinorAxisLength', dataTraining(1:end,19));
+
+    targetTrainStruct = struct('Presence', dataTraining(1:end,1));
+    netTrainTargets = struct2mat(targetTrainStruct);
+    % targetTrainDataset = struct2dataset(targetTrainStruct); 
+    netTrainInputs = struct2mat(inputTrainStruct);
+    % inputTrainDataset = struct2dataset(inputTrainStruct); 
+    % clear dataTraining;
+    vars.devideData = {'targetTrainStruct', 'inputTrainStruct'};
+    clear(vars.devideData{:});
+end
+%% Check for NaNs
+
+if isNormalize == 0
+    if CheckNaN(netTrainInputs) > 0
+        msg = sprintf('There are %d NaNs in your training data!', CheckNaN(netTrainInputs));
+        helpdlg(msg, 'Point Selection');
+    end
+elseif isNormalize == 1
+    if CheckNaN(netTrainInputsNorm) > 0
+        msg = sprintf('There are %d NaNs in your training data!', CheckNaN(netTrainInputs));
+        helpdlg(msg, 'Point Selection');
+    end
+end
+    
 if exist('isNormalize', 'var') == 1
     clear isNormalize;
-end
-%% Get not normalized data
-dataTraining = struct2cell(dataTraining.').';
-% if isUseNormalization == 0
-% %     dataTraining = struct2cell(dataTraining.').';
-%     disp('Alexei');
-% else
-%     dataTraining = dataTrainingNorm;
-% end
-inputTrainStruct = struct('Area', dataTraining(1:end,2), ...
-                          'ConvexArea', dataTraining(1:end,3), ...
-                          'Perimeter', dataTraining(1:end,4), ...
-                          'Eccentricity', dataTraining(1:end,5), ...
-                          'Solidity', dataTraining(1:end,6), ...
-                          'Extent', dataTraining(1:end,7), ...
-                          'EquivDiameter', dataTraining(1:end,8), ...
-                          'MaxIntensity', dataTraining(1:end,9), ...
-                          'MeanIntensity', dataTraining(1:end,10), ...
-                          'MinIntensity', dataTraining(1:end,11), ...
-                          'Variance', dataTraining(1:end,12), ...
-                          'StandardDeviation', dataTraining(1:end,13), ...
-                          'Contrast', dataTraining(1:end,14), ...
-                          'Correlation', dataTraining(1:end,15), ...
-                          'Energy', dataTraining(1:end,16), ...
-                          'Homogeneity', dataTraining(1:end,17), ...
-                          'MajorAxisLength', dataTraining(1:end,18), ...
-                          'MinorAxisLength', dataTraining(1:end,19));
-
-targetTrainStruct = struct('Presence', dataTraining(1:end,1));
-netTrainTargets = struct2mat(targetTrainStruct);
-% targetTrainDataset = struct2dataset(targetTrainStruct); 
-clear targetTrainStruct;
-netTrainInputs = struct2mat(inputTrainStruct);
-% inputTrainDataset = struct2dataset(inputTrainStruct); 
-clear inputTrainStruct;
-% clear dataTraining;
-%% Check for NaNs
-if CheckNaN(netTrainInputs) > 0
-    msg = sprintf('There are %d NaNs in your training data!', CheckNaN(netTrainInputs));
-    helpdlg(msg, 'Point Selection');
 end
