@@ -1,8 +1,0 @@
-function arr = myNorm(x)
-    stdLocal = std(x);
-    meanLocal = mean(x);
-    for i = 1 : numel(x)
-        arr(i) = x(i) 
-    end
-
-end
