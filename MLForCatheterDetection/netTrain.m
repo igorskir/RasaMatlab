@@ -8,20 +8,22 @@ numFeats = 18; % 5, 9, 11, 18
 
 % Load the data
 if isNormalize == 1 
-    load(strcat(num2str(numFeats), '_features_norm.mat'));
+%     load(strcat(num2str(numFeats), '_features_norm.mat'));
     load('targets');
 elseif isNormalize == 0
-    load(strcat(num2str(numFeats), '_features.mat'));
+%     load(strcat(num2str(numFeats), '_features.mat'));
     load('targets');
 end
 
-% t = netTrainTargetsNorm';
-x = netSelectInputs';
+dataLoading;
+x = GetDataUsingModel(netTrainInputsNorm, 'D122:U122')';
+t = netTrainTargetsNorm';
+
+% x = netSelectInputs';
 % x = netTrainInputs';
-t = netTrainTargets';
 
 netType = 'feed-forward'; % 'feed-forward', 'cascade', 'recurrent'
-netSize = 'small'; % small, mid , big
+netSize = 'mid'; % small, mid , big
 trainingFunction = 'BR';    % training function  
 isGPU = 'no';               % train a net on GPUs
 isParallel = 'no';          % train a net on a parallel pool

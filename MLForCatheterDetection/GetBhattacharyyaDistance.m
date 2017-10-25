@@ -7,26 +7,11 @@ function d = getBhattacharyyaDistance(X1,X2)
 %         samples and m variables.
 %
 % Output: d is the Bhattacharyya distance between these two sets of data.
-%
-% Example:
-%{
-N=100;
-M=10;
-e1=2;
-e2=5;
-c1=3;
-c2=7;
-X1 = c1*randn(N,M)+e1;
-X2 = c2*randn(N,M)+e2;
-d = bhattacharyya(X1,X2);
-%}
+
 % Reference:
 % Kailath, T., The Divergence and Bhattacharyya Distance Measures in Signal
 % Selection, IEEE Trasnactions on Communication Technology, Vol. 15, No. 1,
 % pp. 52-60, 1967
-%
-% By Yi Cao at Cranfield University on 8th Feb 2008.
-%
 
 %Check inputs and output
 error(nargchk(2,2,nargin));
@@ -45,6 +30,7 @@ C=(C1+C2)/2;
 dmu=(mu1-mu2)/chol(C);
 try
     d=0.125*dmu*dmu'+0.5*log(det(C/chol(C1*C2)));
+%     d = 0.125*(mu1 - mu2)'*(C^-1)*(mu1 - mu2)+0.5*log(det(C)/sqrtm(det(C1)*det(C2)));
 catch
     d=0.125*dmu*dmu'+0.5*log(abs(det(C/sqrtm(C1*C2))));
     warning('MATLAB:divideByZero','Data are almost linear dependent. The results may not be accurate.');

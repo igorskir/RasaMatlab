@@ -1,6 +1,6 @@
 function outputArray = GetDataUsingModel(inputs, varargin)
     try       
-        defaultRange = 'D121:U121';    
+        defaultRange = 'D122:U122';    
         switch nargin
             case 1
                 xlRange = defaultRange;
@@ -16,7 +16,7 @@ function outputArray = GetDataUsingModel(inputs, varargin)
         sheet = 'Catheter analysis';
         model = xlsread(cathDataFile, sheet, xlRange);
         numCols = numel(model);
-        numRows = size(inputs,1);
+        numRows = size(inputs, 1);
         
         if size(inputs,2) ~= numCols
             error('Input array and your model should have the same number of columns')
