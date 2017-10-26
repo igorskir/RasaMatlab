@@ -4,4 +4,3 @@ t.Color = 'black';
 t.FontName = 'Times New Roman';
 t.FontSize = 12;
 end
-%SLISH PACAN, CHO TI MUTISH TUT
