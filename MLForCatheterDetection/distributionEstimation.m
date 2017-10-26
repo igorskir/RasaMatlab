@@ -1,45 +1,53 @@
 %% Load the distributions 
-
 isNormalize = 0;
 if isNormalize == 0
     sample = struct2mat(dataTraining);
 else
     sample = dataTrainingNorm;
 end
-[numBins,edges] = histcounts(sample, 'BinMethod', 'auto');
-
-
+featureArr = sample(:,1);
+featureArr = sample(:,10);
+vars.distributionLoading = {'isNormalize', 'sample'};
+clear(vars.distributionLoading{:});
 %%
+[numBins,edges] = histcounts(featureArr, 'BinMethod', 'fd');
 numBinsCatheter = zeros(1, size(numBins,2));
 numBinsTissue = zeros(1, size(numBins,2));
-numRows = size(sample, 1);
-numCols = size(sample, 2);
+numRows = size(featureArr, 1);
+numCols = size(featureArr, 2);
+intervalStep = edges(2) - edges(1);
+% intervalStep = round(edges(end)/size(numBins,2));
 for i = 1:numRows
-    novayaPeremennaya = floor((sample(i,2) - edges(1))/(edges(2) - edges(1))) + 1; 
-        if sample(i,1) == 1 
-            numBinsCatheter(1, novayaPeremennaya) = numBinsCatheter(1, novayaPeremennaya) + 1;
+    bin = floor((featureArr(i,2) - edges(1))/intervalStep) + 1; 
+        if featureArr(i,1) == 1 
+            numBinsCatheter(1, bin) = numBinsCatheter(1, bin) + 1;
         else
-            numBinsTissue(1, novayaPeremennaya) = numBinsTissue(1, novayaPeremennaya) + 1;
+            numBinsTissue(1, bin) = numBinsTissue(1, bin) + 1;
         end  
 end
-numCathCases = sum(numBinsCatheter);
-numTissueCases = sum(numBinsTissue);
+vars.separation = {'numRows', 'numCols', 'i', 'bin', 'numBins'};
+clear(vars.separation{:});
 
-numBinsCatheter = numBinsCatheter/(numCathCases*(edges(2) - edges(1)));
-numBinsTissue = numBinsTissue/(numTissueCases*(edges(2) - edges(1)));
+%% Normalization
+numBinsCatheterNorm = numBinsCatheter/size(dataCatheter,1);
+numBinsTissueNorm = numBinsTissue/size(dataTissue,1);
+catheterSum = sum(numBinsCatheterNorm);
+catheterSum = sum(numBinsTissueNorm);
+vars.normalization = {'catheterSum', 'catheterSum'};
+clear(vars.normalization{:});
 
-plot(numBinsTissue);
+%% Get the score
+overallDelta = 0;
+for i = 1:size(numBinsCatheterNorm,2)
+    currentDelta = numBinsCatheterNorm(1,i) - numBinsTissueNorm(1,i);
+    if numBinsCatheterNorm(1,i) ~= 0 && currentDelta > 0
+        overallDelta = overallDelta + currentDelta; 
+    end    
+end
+
+plot(numBinsCatheterNorm)
 hold on
-plot(numBinsCatheter);
+plot(numBinsTissueNorm)
 
-numBinsCatheter(numBinsCatheter == 0) = [];
-numBinsTissue(numBinsTissue == 0) = [];
-z = numBinsCatheter./(numBinsCatheter + numBinsTissue);
-
-featureScore = mean(z); 
-
-
-
-
-
-
+vars.scoreObtaining = {'i', 'currentDelta', 'numBinsCatheterNorm', 'numBinsTissueNorm'};
+clear(vars.scoreObtaining{:});

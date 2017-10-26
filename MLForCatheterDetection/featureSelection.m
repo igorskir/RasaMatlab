@@ -1,6 +1,6 @@
 %% Feature selection
 useNormData = 1; % 1 - yes, 0 - no
-funType = 2; % 1 - dicriminant, 2 - svm, 3 - knn, 4 - fsra
+funType = 3; % 1 - dicriminant, 2 - svm, 3 - knn, 4 - fsra
 cvType = 1; % 1 - k-fold, 2 - Holdout
 featType = 2; % 1 - auto, 2 - 5 featues, 3 - 11 features
 options = statset('display', 'iter', 'MaxIter', 1000);
