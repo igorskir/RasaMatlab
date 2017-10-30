@@ -55,7 +55,7 @@ clear(vars.removingNaNs{:});
 %% Get normalized data
 if isNormalize == 1
     temp = struct2mat(dataTraining);
-    dataTrainingNorm = robustNormalization(temp, 'quantile', 0); % quartile, std, mean, linear
+    dataTrainingNorm = RobustNormalization(temp, 'quantile', 0); % quartile, std, mean, linear
     numFields = numel(fieldnames(dataTraining));
     dataTissueNorm = zeros(1, numFields, 'double');
     dataCatheterNorm = zeros(1, numFields, 'double');
@@ -97,37 +97,6 @@ if isNormalize == 0
     clear(vars.normalization{:});
 end
 
-% if isNormalize == 0
-%     dataTraining = struct2cell(dataTraining.').';
-%     inputTrainStruct = struct('Area', dataTraining(1:end,2), ...
-%                               'ConvexArea', dataTraining(1:end,3), ...
-%                               'Perimeter', dataTraining(1:end,4), ...
-%                               'Eccentricity', dataTraining(1:end,5), ...
-%                               'Solidity', dataTraining(1:end,6), ...
-%                               'Extent', dataTraining(1:end,7), ...
-%                               'EquivDiameter', dataTraining(1:end,8), ...
-%                               'MaxIntensity', dataTraining(1:end,9), ...
-%                               'MeanIntensity', dataTraining(1:end,10), ...
-%                               'MinIntensity', dataTraining(1:end,11), ...
-%                               'Variance', dataTraining(1:end,12), ...
-%                               'StandardDeviation', dataTraining(1:end,13), ...
-%                               'Contrast', dataTraining(1:end,14), ...
-%                               'Correlation', dataTraining(1:end,15), ...
-%                               'Energy', dataTraining(1:end,16), ...
-%                               'Homogeneity', dataTraining(1:end,17), ...
-%                               'MajorAxisLength', dataTraining(1:end,18), ...
-%                               'MinorAxisLength', dataTraining(1:end,19));
-% 
-%     targetTrainStruct = struct('Presence', dataTraining(1:end,1));
-%     netTrainTargets = struct2mat(targetTrainStruct);
-%     % targetTrainDataset = struct2dataset(targetTrainStruct); 
-%     netTrainInputs = struct2mat(inputTrainStruct);
-%     % inputTrainDataset = struct2dataset(inputTrainStruct); 
-%     % clear dataTraining;
-%     vars.devideData = {'targetTrainStruct', 'inputTrainStruct'};
-%     clear(vars.devideData{:});
-% end
-
 %% Comptuing Bhattacharyya and Statistical distance
 if isGetDistance == 1
     
@@ -157,29 +126,6 @@ end
 if exist('isGetDistance', 'var') == 1
     clear isGetDistance;
 end
-
-% 
-% if isGetDistance == 1 && isNormalize == 1
-%     
-%     
-%     numFeats = size(dataCatheterNorm,2)-1;
-%     distBhatt = zeros(1, numFeats);
-%     distStat = zeros(1, numFeats);
-%     distType = 'mahalanobis';
-%     for i = 1:numFeats
-%         distBhatt(1, i) = GetBhattacharyyaDistance(dataCatheterNorm(:, i+1), dataTissueNorm(:, i+1)); 
-%         temp = pdist2(dataCatheterNorm(:, i+1), dataTissueNorm(:, i+1),...
-%                       distType, 'Smallest', 1); 
-%         distStat(1, i) = mean(temp); 
-%     end
-%     vars.distanceComputing = {'temp', 'distType', 'i', 'isGetDistances', ...
-%                               'numFeats', 'isGetDistance'};
-%     clear(vars.distanceComputing{:});
-% end
-% 
-% if exist('isGetDistance', 'var') == 1
-%     clear isGetDistance;
-% end
 
 %% Check for NaNs
 

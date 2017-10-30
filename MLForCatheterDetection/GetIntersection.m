@@ -31,7 +31,7 @@ function overlap = GetIntersection(v1, v2, varargin)
         end
         overlap = (overlap/possibleCombs)*100;
     catch ME
-		errorMessage = sprintf('Error in GetWeights().\n The error reported by MATLAB is:\n\n%s', ME.message);
+		errorMessage = sprintf('Error in GetIntersection().\n The error reported by MATLAB is:\n\n%s', ME.message);
 		uiwait(warndlg(errorMessage));
 		set(handles.txtInfo, 'String', errorMessage);
     end

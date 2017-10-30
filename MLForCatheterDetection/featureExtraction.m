@@ -1,5 +1,5 @@
 %% Initial state of the programm
-% clear all; close all; clc;
+clear all; close all; clc;
 set(0, 'DefaultFigureWindowStyle', 'normal');
 currentFolder = pwd;
 addpath(genpath(pwd));
@@ -9,8 +9,11 @@ isNormalize = 1;
 isVisual = 0;
 isFill = 0;
 nTimeframe = 1; %9
+
 %XLS reading
-cathDataFile = 'D:\Clouds\Google Drive\RASA\Matlab\12. Catheter ML\Presentation\LV Catheter 07.xlsx';
+% cathDataFile = 'D:\RASA Lab\MLForCatheterDetection\Presentation\LV Catheter 07.xlsx';
+cathDataFile = 'LV Catheter 07.xlsx';
+
 sheet = 'Sheet1';
 xlRange = 'C7:S8';
 cathData = xlsread(cathDataFile,sheet,xlRange);
@@ -21,18 +24,14 @@ scrSz = get(0, 'Screensize');
 featuresAll = struct([]);
 
 %% Reading the data
-tic;
 filename = 'LV Catheter 07.nrrd'; % delete after getting  features
 [X, meta] = nrrdread(filename);
-Y = double(X);
 sz = sscanf(meta.sizes, '%d');
 nDims = sscanf(meta.dimension, '%d');
 I = squeeze(X(:,:,:,nTimeframe));
-% implay(I);
-toc;
 
-%% Binarization
-for nSlice = sliceRange % comment if you need to check 1 slice
+% Binarization
+for nSlice = sliceRange
     img = I(:,:,nSlice);
     % level = threshTool(img)/255;
     [level,EM] = graythresh(img);
@@ -41,7 +40,7 @@ for nSlice = sliceRange % comment if you need to check 1 slice
         str1 = sprintf('Binarized image');
         str2 = sprintf('Thresholding level: %.3f (%d out of 255)', level, uint8(level*255));
         str3 = sprintf('Effectiveness metric: %.3f', EM);
-        imshow(BW, 'InitialMagnification', 'fit'); addTitle({str1; str2; str3});
+        imshow(BW, 'InitialMagnification', 'fit'); AddTitle({str1; str2; str3});
         set(gcf, 'Position', scrSz, 'Color', 'w');
     end
     vars.binarization = {'str1', 'str2', 'str3', 'EM'};
@@ -81,13 +80,12 @@ for nSlice = sliceRange % comment if you need to check 1 slice
         colorLabelIni = label2rgb(Lfill, 'parula', 'k', 'shuffle');
         str1 = sprintf('Region labeling');
         str2 = sprintf('Objects found: %d', numFill);
-        imshow(colorLabelIni, 'InitialMagnification', 'fit'); addTitle({str1; str2});
+        imshow(colorLabelIni, 'InitialMagnification', 'fit'); AddTitle({str1; str2});
         set(gcf, 'Position', scrSz, 'Color', 'w');
     end
     vars.fillingHoles = {'str1', 'str2'};
     clear(vars.fillingHoles{:});
     %% Main feature analysis
-    tic;
     featuresFill = regionprops(Lfill,  img, {'Area', ... 
                                              'PixelValues', ...
                                              'Eccentricity', ...
@@ -111,7 +109,7 @@ for nSlice = sliceRange % comment if you need to check 1 slice
     end
     if isVisual == 1
         imshow(BWfill, 'InitialMagnification', 'fit');
-        addTitle('Mean and Standard deviation of regions');
+        AddTitle('Mean and Standard deviation of regions');
         pmSymbol = char(177);
         hold on
         for count = 1:numFill
@@ -129,27 +127,22 @@ for nSlice = sliceRange % comment if you need to check 1 slice
     %% GLCM analysis
     if ~isempty(featuresFill)
         glcm = cell(1, numFill);
-        glcmprops = struct('Contrast', [], 'Correlation', [], ...
-                           'Energy', [], 'Homogeneity', []); % all features
-%         glcmprops = struct('Contrast', [], 'Energy', [], 'Homogeneity',
-%         []); % ONLY CERTAIN FEATURES
+        glcmprops = struct('Contrast', [], ...
+                           'Correlation', [], ...
+                           'Energy', [], ...
+                           'Homogeneity', []);
         for count = 1:numFill
             rect = featuresFill(count).BoundingBox;
             croppedImg = imcrop(img, rect);
             glcm{count} = graycomatrix(croppedImg, 'NumLevels', 255);
             glcmprops(count) = graycoprops(glcm{count}); % all features
-%             glcmprops(count) = graycoprops(glcm{count}, {'Contrast', ...
-%                                                          'Energy', ...
-%                                                          'Homogeneity'});
-%                                                          % ONLY CERTAIN
-%                                                          FEATURES
         end
     else
         glcmprops = struct([]);
     end
     vars.glcmAnalysis = {'i', 'rect', 'str1', 'str2', 'croppedImg', 'colorScheme', 'posX', 'posY', 'str'};
     clear(vars.glcmAnalysis{:});
-    %% All features
+    %% Merging into one structure all features
     numFeatures = numel(featuresFill);
     for count = 1:numFeatures
         for fn = fieldnames(featuresFill)'
@@ -164,13 +157,11 @@ for nSlice = sliceRange % comment if you need to check 1 slice
     end
     if isVisual == 0
         hFig = figure;
-%         hFrame = get(handle(gcf),'JavaFrame'); % MAXIMIZE
-%         imshow(BWfill, 'InitialMagnification', 'fit');
         imshowpair(BWfill, img, 'montage');
         str0 = sprintf("%d timeframe: %d:%d", nTimeframe,minSlice,maxSlice);
         str1 = sprintf("%d slice", nSlice);
         str2 = 'Enumeration of regions';
-        addTitle({str0, str1, str2});
+        AddTitle({str0, str1, str2});
         hold on
         for count = 1:numFill
             posX = featuresFill(count).Extrema(1,1) - 4;
@@ -178,14 +169,10 @@ for nSlice = sliceRange % comment if you need to check 1 slice
             str = sprintf("%d", count);
             text(posX, posY, char(str), 'FontSize', 18, 'FontName', 'Times New Roman', 'Color', 'g');
         end
-%         hFrame.setMaximized(1);  % MAXIMIZE
-%         set(gcf, 'Position', scrSz/2, 'Color', 'w', 'name', str1, 'numbertitle', 'off');
         set(gcf, 'Position', [scrSz(3), 0, scrSz(3), scrSz(4)],...
             'Color', 'w', 'name', str1, 'numbertitle', 'off'); % FOR THE SECOND DISPLAY ONLY
-% %         set(gcf, 'Position', [scrSz(3)/2, scrSz(2), scrSz(3)/2, scrSz(4)],...
-% %             'Color', 'w', 'name', str1, 'numbertitle', 'off'); % FOR ONE DISPLAY ONLY    
-%         set(0,'DefaultFigureWindowStyle','docked');
-%         set(hFrame,'Maximized',1); % MAXIMIZE
+%         set(gcf, 'Position', [scrSz(3)/2, scrSz(2), scrSz(3)/2, scrSz(4)],...
+%             'Color', 'w', 'name', str1, 'numbertitle', 'off'); % FOR ONE DISPLAY ONLY    
         hold off
     end
     [featuresTemp(1:numFeatures).Presence] = deal(0);
@@ -193,7 +180,7 @@ for nSlice = sliceRange % comment if you need to check 1 slice
     featuresTemp = rmfield(featuresTemp,fieldsToDel);
     
     if isNormalize == 1
-        featuresTemp = robustNormalization(featuresTemp, 'quantile', 0);
+        featuresTemp = RobustNormalization(featuresTemp, 'quantile', 0);
         featuresTemp = featuresTemp';
     end
     
@@ -202,6 +189,5 @@ for nSlice = sliceRange % comment if you need to check 1 slice
     featuresAll = [featuresTemp, featuresAll];
     vars.allFeatureAnalysis = {'count', 'PosX', 'PosY', 'str1', 'str2'};
     clear(vars.allFeatureAnalysis{:});
-end % comment if you need to check 1 slice
-
+end
 % writetable(struct2table(featuresAll), 'features.xlsx')
