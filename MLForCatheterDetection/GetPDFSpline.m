@@ -1,4 +1,4 @@
-function [ pp ] = GetPDFSpline(data,binCount)
+function [middles, bins] = GetPDFSpline(data,binCount)
 maxEl=max(data);
 minEl=min(data);
 %binCount=10;
@@ -20,12 +20,17 @@ middles=zeros(binCount,1);
 for i=1:binCount
     middles(i)=(edges(i)+edges(i+1))/2;
 end
-figure;
-plot(middles,bins);
-hold on;
-x=minEl:step*0.01:maxEl;
-y=spline(middles,bins,x);
-sum(y)*step*0.01
-plot(x,y,'red');
-pp=cscvn([middles; bins]);
+% figure;
+% plot(middles,bins,'*');
+% hold on;
+% x=minEl:step*0.01:maxEl;
+% %y=spline(middles,bins,x);
+% %sum(y)*step*0.01
+% %plot(x,y,'red');
+% grid on
+% pp=cscvn([]);
+% y=ppval(pp,x);
+% y
+% hold on;
+% plot(x,y);
 end
