@@ -1,24 +1,22 @@
-function [middles, bins] = GetPDFSpline(data,binCount)
-maxEl=max(data);
-minEl=min(data);
-%binCount=10;
-step=(maxEl-minEl)/binCount;
-edges=minEl:step:maxEl;
-bins=zeros(binCount,1);
-
-for i=1:numel(data)
-    for j=1:binCount
-        currEl=data(i);
-        if(currEl>=edges(j) && currEl<=edges(j+1))
-            bins(j)=bins(j)+1;
+function [middleVals, bins] = GetPDFSpline(data, binCount)
+maxElement = max(data);
+minElement = min(data);
+step = (maxElement - minElement)/binCount;
+edges = minElement:step:maxElement;
+bins = zeros(binCount, 1);
+for i = 1:numel(data)
+    for j = 1:binCount
+        currElement = data(i);
+        if(currElement >= edges(j) && currElement <= edges(j+1))
+            bins(j) = bins(j)+1;
             break;
         end
     end
 end
-bins=bins/(numel(data)*step);
-middles=zeros(binCount,1);
-for i=1:binCount
-    middles(i)=(edges(i)+edges(i+1))/2;
+bins = bins/(numel(data)*step);
+middleVals = zeros(binCount, 1);
+for i = 1:binCount
+    middleVals(i) =(edges(i)+edges(i+1))/2;
 end
 % figure;
 % plot(middles,bins,'*');
