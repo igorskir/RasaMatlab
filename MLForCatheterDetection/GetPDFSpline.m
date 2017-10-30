@@ -25,7 +25,7 @@ plot(middles,bins);
 hold on;
 x=minEl:step*0.01:maxEl;
 y=spline(middles,bins,x);
-maxEl
-
+sum(y)*step*0.01
 plot(x,y,'red');
+pp=cscvn([middles; bins]);
 end
