@@ -1,22 +1,43 @@
-function [ ] = ShowPDFDifference(dataTissue, dataCath, binCountTissue, binCountCath)
+function [ ] = ShowPDFDifference(dataTissue, dataCath, binCountTissue, binCountCath, isDiscrete)
 scrSz = get(0, 'Screensize');
-[xTissue, probTissue] = GetPDFSpline(dataTissue,binCountTissue);
-[xCath, probCath] = GetPDFSpline(dataCath,binCountCath);
-step = (xCath(end) - xCath(1))/(binCountCath*20);
 sum = 0;
+[xTissue, probTissue] = GetPDFSpline(dataTissue, binCountTissue, isDiscrete);
+[xCath, probCath] = GetPDFSpline(dataCath, binCountCath, isDiscrete);
+
 tissueMin = min(xTissue);
 tissueMax = max(xTissue);
-for i = xCath(1):step:xCath(end)
-    splineCath = spline(xCath, probCath,i);
-    if (i >= tissueMin && i <= tissueMax)
-        splineTissue = spline(xTissue, probTissue, i);
-        if (splineTissue <= splineCath)
-            sum = sum + (splineCath-splineTissue) * step;
+cathMin = min(xCath);
+cathMax = max(xCath);
+z=0;
+if(~isDiscrete) % non-discrete
+    step = (xCath(end) - xCath(1))/(binCountCath*20);
+    for i = xCath(1):step:xCath(end)
+        splineCath = spline(xCath, probCath,i);
+        if (i >= tissueMin && i <= tissueMax)
+            splineTissue = spline(xTissue, probTissue, i);
+            if (splineTissue <= splineCath)
+                sum = sum + (splineCath-splineTissue) * step;
+            end
+        else
+            sum = sum + splineCath * step;
         end
-    else
-        sum = sum + splineCath * step;
+    end
+else
+   step=1;
+   for i = xCath(1):step:xCath(end)
+            cathValue=probCath(i-cathMin+1);
+            if (i >= tissueMin && i <= tissueMax)
+                   tissueValue=probTissue(i-tissueMin+1);
+                if (tissueValue < cathValue)
+                    sum = sum + cathValue-tissueValue;
+                    z=i;
+                end
+            else
+                sum = sum + cathValue;
+            end
     end
 end
+z
  % Draw plot and tune its settings
 hFig = figure;
 ax = axes('Parent', hFig);
@@ -33,5 +54,18 @@ set(ax,'FontName','Times New Roman','FontSize',12);
 grid on
 set(gcf, 'Position', [1, scrSz(2), scrSz(3), scrSz(4)],...
  'Color', 'w', 'name', 'Score', 'numbertitle', 'off');
+sum
+
+figure;
+x=xCath(1):step:xCath(end);
+y=spline(xCath, probCath,x);
+plot(x,y);
+hold on;
+
+
+x=xTissue(1):step:xTissue(end);
+y=spline(xTissue, probTissue,x);
+plot(x,y);
+legend('Catheter PDF', 'Tissue PDF')
 end
 
