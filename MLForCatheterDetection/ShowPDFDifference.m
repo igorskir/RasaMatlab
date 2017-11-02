@@ -9,12 +9,15 @@ tissueMax = max(xTissue);
 cathMin = min(xCath);
 cathMax = max(xCath);
 z=0;
+splineMethod = 'pchip';
 if(~isDiscrete) % non-discrete
     step = (xCath(end) - xCath(1))/(binCountCath*20);
     for i = xCath(1):step:xCath(end)
-        splineCath = spline(xCath, probCath,i);
+        %splineCath = spline(xCath, probCath,i);
+        splineCath = interp1(xCath, probCath,i,splineMethod);
         if (i >= tissueMin && i <= tissueMax)
-            splineTissue = spline(xTissue, probTissue, i);
+            %splineTissue = spline(xTissue, probTissue, i);
+            splineTissue = interp1(xTissue, probTissue, i,splineMethod);
             if (splineTissue <= splineCath)
                 sum = sum + (splineCath-splineTissue) * step;
             end
@@ -37,7 +40,7 @@ else
             end
     end
 end
-z
+
  % Draw plot and tune its settings
 hFig = figure;
 ax = axes('Parent', hFig);
@@ -54,17 +57,18 @@ set(ax,'FontName','Times New Roman','FontSize',12);
 grid on
 set(gcf, 'Position', [1, scrSz(2), scrSz(3), scrSz(4)],...
  'Color', 'w', 'name', 'Score', 'numbertitle', 'off');
-sum
 
+% Smoothed plot
 figure;
 x=xCath(1):step:xCath(end);
-y=spline(xCath, probCath,x);
+%y=spline(xCath, probCath,x);
+y=interp1(xCath, probCath,x,splineMethod);
 plot(x,y);
 hold on;
 
-
 x=xTissue(1):step:xTissue(end);
-y=spline(xTissue, probTissue,x);
+%y=spline(xTissue, probTissue,x);
+y=interp1(xTissue, probTissue,x,splineMethod);
 plot(x,y);
 legend('Catheter PDF', 'Tissue PDF')
 end

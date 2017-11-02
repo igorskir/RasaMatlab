@@ -6,6 +6,7 @@ middleVals = 0;
 if ~isDiscrete 
     data=sort(data);
     elementsPerBin=floor(numel(data)/binCount)+1;
+    binCount=floor(numel(data)/elementsPerBin)+1;
     edges=zeros(binCount+1,1);
     bins=zeros(binCount,1);
     edges(1)=data(1);
@@ -19,6 +20,42 @@ if ~isDiscrete
     end
     edges(end)=data(end);
     bins(end)=(numel(data)-(index-elementsPerBin));
+    % Merging bad bins
+    allMerged=false;
+    while (~allMerged)
+        allMerged=true;
+        for i=1:binCount
+            if(edges(i)==edges(i+1))
+                allMerged=false;
+                if(i==1) % right merge
+                    mergeType='R';
+                else
+                    if(i==binCount) % left merge
+                        mergeType='L';
+                    else
+                        d1=edges(i)-edges(i-1);
+                        d2=edges(i+1)-edges(i);
+                        if(d1<d2)
+                            mergeType='L';
+                        else
+                            mergeType='R';
+                        end
+                    end
+                end
+                if(mergeType=='L')
+                    bins(i-1)=bins(i-1)+bins(i);
+                    bins(i)=[];
+                    edges(i)=[];
+                else
+                    bins(i+1)=bins(i+1)+bins(i)
+                    bins(i)=[];
+                    edges(i+1)=[];
+                end
+                binCount=binCount-1;                
+                break;
+            end
+        end      
+    end
     middleVals=zeros(binCount,1);
     for i=1:binCount
         middleVals(i)=(edges(i)+edge(i+1))/2;
