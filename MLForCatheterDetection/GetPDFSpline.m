@@ -6,9 +6,9 @@ middleVals = 0;
 if ~isDiscrete 
     data=sort(data);
     elementsPerBin=floor(numel(data)/binCount)+1;
-    binCount=floor(numel(data)/elementsPerBin)+1;
-    edges=zeros(binCount+1,1);
-    bins=zeros(binCount,1);
+    %binCount=floor(numel(data)/elementsPerBin)+1;
+    %edges=zeros(binCount+1,1);
+    %bins=zeros(binCount,1);
     edges(1)=data(1);
     index=elementsPerBin;
     i=1;
@@ -18,8 +18,11 @@ if ~isDiscrete
             index=index+elementsPerBin;
             i=i+1;
     end
-    edges(end)=data(end);
-    bins(end)=(numel(data)-(index-elementsPerBin));
+    %edges(end)=data(end);
+    index=index-elementsPerBin;
+    bins(i)=(numel(data)-index);
+    edges(i+1)=data(end);
+    binCount=numel(bins);
     % Merging bad bins
     allMerged=false;
     while (~allMerged)
@@ -47,7 +50,7 @@ if ~isDiscrete
                     bins(i)=[];
                     edges(i)=[];
                 else
-                    bins(i+1)=bins(i+1)+bins(i)
+                    bins(i+1)=bins(i+1)+bins(i);
                     bins(i)=[];
                     edges(i+1)=[];
                 end
@@ -58,7 +61,7 @@ if ~isDiscrete
     end
     middleVals=zeros(binCount,1);
     for i=1:binCount
-        middleVals(i)=(edges(i)+edge(i+1))/2;
+        middleVals(i)=(edges(i)+edges(i+1))/2;
         floatStep=edges(i+1)-edges(i);
         bins(i)=bins(i)/(numel(data)*floatStep);
     end
