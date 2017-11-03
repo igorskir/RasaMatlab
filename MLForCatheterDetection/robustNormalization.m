@@ -1,4 +1,4 @@
-function output = robustNormalization(input, normType, isNormFirstCol)
+function output = RobustNormalization(input, normType, isNormFirstCol)
 
 if isstruct(input)
     [inputArray, fields] = struct2mat(input);
