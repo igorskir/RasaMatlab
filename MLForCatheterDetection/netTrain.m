@@ -15,15 +15,18 @@ elseif isNormalize == 0
     load('targets');
 end
 
-dataLoading;
+DataLoading;
 x = GetDataUsingModel(netTrainInputsNorm, 'D122:U122')';
 t = netTrainTargetsNorm';
-
+%%
 % x = netSelectInputs';
 % x = netTrainInputs';
 
+x = testScore';
+t = netTrainTargets';
+
 netType = 'feed-forward'; % 'feed-forward', 'cascade', 'recurrent'
-netSize = 'mid'; % small, mid , big
+netSize = 'small'; % small, mid , big
 trainingFunction = 'BR';    % training function  
 isGPU = 'no';               % train a net on GPUs
 isParallel = 'no';          % train a net on a parallel pool
