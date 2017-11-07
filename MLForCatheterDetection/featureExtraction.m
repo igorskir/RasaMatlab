@@ -5,23 +5,33 @@ currentFolder = pwd;
 addpath(genpath(pwd));
 
 %% Global variables
-isNormalize = 1;
+isNormalize = 0;
 isVisual = 0;
 isFill = 0;
 nTimeframe = 1; %9
+ax = 'short'; % 'long1', 'long2'
 
 %XLS reading
 % cathDataFile = 'D:\RASA Lab\MLForCatheterDetection\Presentation\LV Catheter 07.xlsx';
 cathDataFile = 'LV Catheter 07.xlsx';
-
 sheet = 'Sheet1';
-xlRange = 'C7:S8';
+switch ax
+    case 'short'
+        xlRange = 'C7:S8';
+    case 'long1'
+        xlRange = 'C17:S18';
+    case 'long2'
+        xlRange = 'C27:S28';
+    otherwise
+        disp('Wrong value')
+end
+
 cathData = xlsread(cathDataFile,sheet,xlRange);
 minSlice = cathData(1,nTimeframe);
 maxSlice = cathData(2,nTimeframe);
 sliceRange = minSlice:maxSlice; % 35:55
+% sliceRange = 87;
 scrSz = get(0, 'Screensize');
-featuresAll = struct([]);
 
 %% Reading the data
 filename = 'LV Catheter 07.nrrd'; % delete after getting  features
@@ -30,9 +40,10 @@ sz = sscanf(meta.sizes, '%d');
 nDims = sscanf(meta.dimension, '%d');
 I = squeeze(X(:,:,:,nTimeframe));
 
-% Binarization
+%% Binarization
 for nSlice = sliceRange
-    img = I(:,:,nSlice);
+%     img = I(:,:,nSlice);
+    img = GetImage(I, nSlice, ax);
     % level = threshTool(img)/255;
     [level,EM] = graythresh(img);
     BW = imbinarize(img, level);
@@ -57,9 +68,10 @@ for nSlice = sliceRange
                           'EquivDiameter', [], ...
                           'MaxIntensity', [], ...
                           'MeanIntensity', [], ...
-                          'EulerNumber', [], ...
                           'Variance', [], ...
                           'StandardDeviation', [], ...
+                          'Skewness', [], ...
+                          'Kurtosis', [], ...
                           'Contrast', [], ...
                           'Correlation', [], ...
                           'Entropy', [], ...
@@ -96,7 +108,6 @@ for nSlice = sliceRange
                                              'EquivDiameter', ...
                                              'MaxIntensity', ...
                                              'MeanIntensity', ...
-                                             'EulerNumber', ...
                                              'Extrema', ...
                                              'BoundingBox',...
                                              'Perimeter', ...
@@ -105,7 +116,9 @@ for nSlice = sliceRange
     for count = 1:numFill
             featuresFill(count).StandardDeviation = std(double(featuresFill(count).PixelValues));
             featuresFill(count).Variance = var(double(featuresFill(count).PixelValues));
-            featuresFill(count).Entropy = entropy(double(featuresFill(count).PixelValues));
+            featuresFill(count).Entropy = entropy(featuresFill(count).PixelValues);
+            featuresFill(count).Skewness = skewness(double(featuresFill(count).PixelValues));
+            featuresFill(count).Kurtosis = kurtosis(double(featuresFill(count).PixelValues));
     end
     if isVisual == 1
         imshow(BWfill, 'InitialMagnification', 'fit');
@@ -136,13 +149,18 @@ for nSlice = sliceRange
             croppedImg = imcrop(img, rect);
             glcm{count} = graycomatrix(croppedImg, 'NumLevels', 255);
             glcmprops(count) = graycoprops(glcm{count}); % all features
+%             tempVectorImg = double(croppedImg);
+%             tempVectorImg = tempVectorImg(:);
+%             featuresFill(count).Skewness = skewness(tempVectorImg); % Compute skewness based on cropped image
+%             featuresFill(count).Kurtosis = kurtosis(tempVectorImg); % Compute kurtosis based on cropped image
         end
     else
         glcmprops = struct([]);
     end
-    vars.glcmAnalysis = {'i', 'rect', 'str1', 'str2', 'croppedImg', 'colorScheme', 'posX', 'posY', 'str'};
+    vars.glcmAnalysis = {'i', 'rect', 'str1', 'str2', 'croppedImg', 'colorScheme', ...
+                         'posX', 'posY', 'str', 'tempVectorImg'};
     clear(vars.glcmAnalysis{:});
-    %% Merging into one structure all features
+    %% Merging all features into one structure 
     numFeatures = numel(featuresFill);
     for count = 1:numFeatures
         for fn = fieldnames(featuresFill)'
@@ -179,13 +197,25 @@ for nSlice = sliceRange
     fieldsToDel = {'Extrema', 'BoundingBox', 'PixelValues'};
     featuresTemp = rmfield(featuresTemp,fieldsToDel);
     
+    % Removing NaNs
+    fn = fieldnames(featuresTemp);
+    for i = 1:numel(fn) 
+        featuresTemp = featuresTemp(~isnan([featuresTemp.(fn{i})]));
+    end
+    vars.removingNaNs = {'fn', 'i'};
+    clear(vars.removingNaNs{:});
+    
+    % Normalization
     if isNormalize == 1
-        featuresTemp = RobustNormalization(featuresTemp, 'quantile', 0);
-        featuresTemp = featuresTemp';
+        featuresTempNorm = RobustNormalization(featuresTemp, 'quantile', 0);
+        featuresTempNorm = featuresTemp';
+        featuresAllNorm = struct([]);
+        featuresAllNorm = [featuresTempNorm, featuresAllNorm];
     end
     
     close(hFig);
     disp(str1);
+    featuresAll = struct([]);
     featuresAll = [featuresTemp, featuresAll];
     vars.allFeatureAnalysis = {'count', 'PosX', 'PosY', 'str1', 'str2'};
     clear(vars.allFeatureAnalysis{:});
