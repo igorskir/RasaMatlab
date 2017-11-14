@@ -1,7 +1,7 @@
-function numNaN = checkNaN(inp)
+function numNaN = CheckNaN(inp)
 
 if isstruct(inp)
-    inp = struct2double(inp);
+    inp = struct2mat(inp);
 end
 
 [numRows, numCols] = size(inp);

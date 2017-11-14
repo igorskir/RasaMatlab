@@ -19,15 +19,13 @@ DataLoading;
 x = GetDataUsingModel(netTrainInputsNorm, 'D122:U122')';
 t = netTrainTargetsNorm';
 %%
-% x = netSelectInputs';
-% x = netTrainInputs';
-
-x = testScore';
-t = netTrainTargets';
+% f = struct2mat(featuresAllNorm); % FOR TESTING
+% t = f(:,1)';
+% x = f(:,2:end)';
 
 netType = 'feed-forward'; % 'feed-forward', 'cascade', 'recurrent'
 netSize = 'small'; % small, mid , big
-trainingFunction = 'BR';    % training function  
+trainingFunction = 'LM';    % training function  
 isGPU = 'no';               % train a net on GPUs
 isParallel = 'no';          % train a net on a parallel pool
 

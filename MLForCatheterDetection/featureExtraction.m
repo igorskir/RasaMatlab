@@ -5,12 +5,16 @@ currentFolder = pwd;
 addpath(genpath(pwd));
 
 %% Global variables
-isNormalize = 0;
-isVisual = 0;
-isFill = 0;
-nTimeframe = 1; %9
-ax = 'short'; % 'long1', 'long2'
+isLabel = 1; % labeling (1) or without labeling (0)
+isNormalize = 1; % normalization (1) or no normaliztion (0)
+isVisual = 1; % visualize (1) or not(0)
+isFill = 0; % filling the holes (1) or not (0)
+openArea = 15;
+method = 'euclidean';
 
+nTimeframe = 2; %9
+ax = 'short'; % 'long1', 'long2'
+    
 %XLS reading
 % cathDataFile = 'D:\RASA Lab\MLForCatheterDetection\Presentation\LV Catheter 07.xlsx';
 cathDataFile = 'LV Catheter 07.xlsx';
@@ -32,6 +36,8 @@ maxSlice = cathData(2,nTimeframe);
 sliceRange = minSlice:maxSlice; % 35:55
 % sliceRange = 87;
 scrSz = get(0, 'Screensize');
+featuresAll = struct([]);
+featuresAllNorm = struct([]);
 
 %% Reading the data
 filename = 'LV Catheter 07.nrrd'; % delete after getting  features
@@ -40,14 +46,17 @@ sz = sscanf(meta.sizes, '%d');
 nDims = sscanf(meta.dimension, '%d');
 I = squeeze(X(:,:,:,nTimeframe));
 
-%% Binarization
+%% Getting the data
+% Binarization
 for nSlice = sliceRange
 %     img = I(:,:,nSlice);
     img = GetImage(I, nSlice, ax);
     % level = threshTool(img)/255;
     [level,EM] = graythresh(img);
     BW = imbinarize(img, level);
-    if isVisual == 1
+    BW = bwareaopen(BW, openArea);
+    BW = GetSeparatedRegions(BW, method, ax);
+    if isVisual == 0
         str1 = sprintf('Binarized image');
         str2 = sprintf('Thresholding level: %.3f (%d out of 255)', level, uint8(level*255));
         str3 = sprintf('Effectiveness metric: %.3f', EM);
@@ -76,7 +85,9 @@ for nSlice = sliceRange
                           'Correlation', [], ...
                           'Entropy', [], ...
                           'Energy', [], ...
-                          'Homogeneity', []);
+                          'Homogeneity', [], ...
+                          'Centroid', [], ...
+                          'Distance', []);
 
     %% Filling holes
     if isFill == 1
@@ -88,8 +99,8 @@ for nSlice = sliceRange
     Lfill = labelmatrix(CCfill);
     numFill = CCfill.NumObjects;
         
-    if isVisual == 1
-        colorLabelIni = label2rgb(Lfill, 'parula', 'k', 'shuffle');
+    if isVisual == 0
+        colorLabelIni = label2rgb(Lfill, colormap(brewermap([],'Accent')), 'k', 'shuffle');
         str1 = sprintf('Region labeling');
         str2 = sprintf('Objects found: %d', numFill);
         imshow(colorLabelIni, 'InitialMagnification', 'fit'); AddTitle({str1; str2});
@@ -111,7 +122,8 @@ for nSlice = sliceRange
                                              'Extrema', ...
                                              'BoundingBox',...
                                              'Perimeter', ...
-                                             'ConvexArea'});   
+                                             'ConvexArea', ...
+                                             'Centroid'});   
     numFill = numel(featuresFill);
     for count = 1:numFill
             featuresFill(count).StandardDeviation = std(double(featuresFill(count).PixelValues));
@@ -120,7 +132,7 @@ for nSlice = sliceRange
             featuresFill(count).Skewness = skewness(double(featuresFill(count).PixelValues));
             featuresFill(count).Kurtosis = kurtosis(double(featuresFill(count).PixelValues));
     end
-    if isVisual == 1
+    if isVisual == 0
         imshow(BWfill, 'InitialMagnification', 'fit');
         AddTitle('Mean and Standard deviation of regions');
         pmSymbol = char(177);
@@ -173,7 +185,8 @@ for nSlice = sliceRange
            featuresTemp(count).(fn{1}) = glcmprops(count).(fn{1});
         end
     end
-    if isVisual == 0
+    
+    if isVisual == 1
         hFig = figure;
         imshowpair(BWfill, img, 'montage');
         str0 = sprintf("%d timeframe: %d:%d", nTimeframe,minSlice,maxSlice);
@@ -186,6 +199,7 @@ for nSlice = sliceRange
             posY = featuresFill(count).Extrema(1,2) - 7;
             str = sprintf("%d", count);
             text(posX, posY, char(str), 'FontSize', 18, 'FontName', 'Times New Roman', 'Color', 'g');
+%             rectangle('Position', featuresFill(count).BoundingBox, 'EdgeColor','c');
         end
         set(gcf, 'Position', [scrSz(3), 0, scrSz(3), scrSz(4)],...
             'Color', 'w', 'name', str1, 'numbertitle', 'off'); % FOR THE SECOND DISPLAY ONLY
@@ -194,30 +208,43 @@ for nSlice = sliceRange
         hold off
     end
     [featuresTemp(1:numFeatures).Presence] = deal(0);
-    fieldsToDel = {'Extrema', 'BoundingBox', 'PixelValues'};
-    featuresTemp = rmfield(featuresTemp,fieldsToDel);
     
+    if isLabel == 1
+        cathCoord = ginput(1);   
+        [length, height] = size(img);
+        xCath = cathCoord(1);
+        yCath = cathCoord(2);
+        if ~(xCath < 0 || yCath < 0 || xCath >= 2*length || yCath >= height)
+            for count = 1:numFill
+                featuresTemp(count).Distance = pdist([featuresTemp(count).Centroid; cathCoord], 'euclidean');
+            end
+            [minDistVal, minDistIndex] = min([featuresTemp.Distance]);
+            featuresTemp(minDistIndex).Presence = 1;
+        end
+    end
+    
+    fieldsToDel = {'Extrema', 'BoundingBox', 'PixelValues', 'Centroid', 'Distance'};
+    featuresTemp = rmfield(featuresTemp,fieldsToDel);
+    close(hFig);
+    disp(str1);
     % Removing NaNs
     fn = fieldnames(featuresTemp);
     for i = 1:numel(fn) 
         featuresTemp = featuresTemp(~isnan([featuresTemp.(fn{i})]));
     end
+    featuresAll = [featuresTemp, featuresAll];
     vars.removingNaNs = {'fn', 'i'};
     clear(vars.removingNaNs{:});
-    
+
     % Normalization
     if isNormalize == 1
         featuresTempNorm = RobustNormalization(featuresTemp, 'quantile', 0);
-        featuresTempNorm = featuresTemp';
-        featuresAllNorm = struct([]);
+        featuresTempNorm = featuresTempNorm';
         featuresAllNorm = [featuresTempNorm, featuresAllNorm];
     end
-    
-    close(hFig);
-    disp(str1);
-    featuresAll = struct([]);
-    featuresAll = [featuresTemp, featuresAll];
+   
     vars.allFeatureAnalysis = {'count', 'PosX', 'PosY', 'str1', 'str2'};
     clear(vars.allFeatureAnalysis{:});
 end
+disp('Done')
 % writetable(struct2table(featuresAll), 'features.xlsx')
