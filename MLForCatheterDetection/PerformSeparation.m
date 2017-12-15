@@ -1,6 +1,3 @@
-% cd('Test watershed');
-% load('BW16.mat');
-% cd ..\
 BW = bwareaopen(BW, 15, 8);
 imshow(BW);
 isVisual = 1;

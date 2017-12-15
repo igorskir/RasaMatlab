@@ -6,96 +6,99 @@ addpath(genpath(pwd));
 isGetDistance = 0;
 isNormalize = 0;
 
-%% Load the data            
+%% Load the data                             
 dataTraining = struct('Presence', [], ...
-                      'Area', [], ...
+                      'Area', [], ... 
                       'ConvexArea', [], ...
-                      'Perimeter', [],  ...
+                      'Perimeter', [], ...
                       'Eccentricity', [], ...
                       'Solidity', [], ...
                       'Extent', [], ...
                       'EquivDiameter', [], ...
                       'MaxIntensity', [], ...
                       'MeanIntensity', [], ...
-                      'MinIntensity', [], ...
                       'Variance', [], ...
-                      'StandardDeviation' , [], ...
+                      'StandardDeviation', [], ...
+                      'Skewness', [], ...
+                      'Kurtosis', [], ...
                       'Contrast', [], ...
                       'Correlation', [], ...
+                      'Entropy', [], ...
                       'Energy', [], ...
                       'Homogeneity', [], ...
                       'MajorAxisLength', [], ... 
                       'MinorAxisLength', []);
+dataTrainingNorm = dataTraining;
 
 % Load training data
-trainingFolder = strcat(currentFolder, '\Labeled data\LV Catheter 07 v.3 (18 features)\Training');
-% trainingFolder = strcat(currentFolder, '\Labeled data\LV Catheter 07 v.4 (18 features)\Training');
+trainingFolder = strcat(currentFolder, '\Labeled data\LV Catheter 07 v.6 (20 features + separation)\Training');
 cd(trainingFolder);
 s = what;
 matfiles = s.mat;
 for i = 1:numel(matfiles)
     tempTrain = load(char(matfiles(i)));
+    tempTrainNorm = tempTrain.featuresAllNorm; 
     tempTrain = tempTrain.featuresAll;
+    dataTrainingNorm = [tempTrainNorm, dataTrainingNorm]; 
     dataTraining = [tempTrain, dataTraining];
 end
 dataTraining(end) = [];
+dataTrainingNorm(end) = [];
 cd ..\..\..\
 vars.loadTrainData = {'currentFolder', 'trainingFolder' , 'i', 's', ...
-                      'matfiles', 'tempTrain'};
+                      'matfiles', 'tempTrain', 'tempTrainNorm'};
 clear(vars.loadTrainData{:});
 
 %% Removing NaNs
 fn = fieldnames(dataTraining);
 for i = 1:numel(fn) 
     dataTraining = dataTraining(~isnan([dataTraining.(fn{i})]));
+    dataTrainingNorm = dataTrainingNorm(~isnan([dataTrainingNorm.(fn{i})]));
 end
 vars.removingNaNs = {'fn', 'i'};
 clear(vars.removingNaNs{:});
 
 %% Get normalized data
-if isNormalize == 1
-    temp = struct2mat(dataTraining);
-    dataTrainingNorm = RobustNormalization(temp, 'quantile', 0); % quartile, std, mean, linear
-    numFields = numel(fieldnames(dataTraining));
-    dataTissueNorm = zeros(1, numFields, 'double');
-    dataCatheterNorm = zeros(1, numFields, 'double');
-    for i = 1:size(dataTrainingNorm, 1)
-       if dataTrainingNorm(i,1) == 1
-            dataCatheterNorm(end+1,:) = dataTrainingNorm(i,:); 
-       else 
-            dataTissueNorm(end+1,:) = dataTrainingNorm(i,:);  
-       end   
-    end
-    netTrainTargetsNorm = dataTrainingNorm(:,1);
-    netTrainInputsNorm = dataTrainingNorm;
-    netTrainInputsNorm(:,1) = [];
-    dataCatheterNorm(1,:) = [];
-    dataTissueNorm(1,:) = [];
-    vars.normalization = {'numFields', 'dataTemp', 'i', 'temp'};
-    clear(vars.normalization{:});
+dataNorm = dataTrainingNorm;
+numFields = numel(fieldnames(dataTrainingNorm));
+dataTissueNorm = zeros(1, numFields, 'double');
+dataCatheterNorm = zeros(1, numFields, 'double');
+dataTrainingNorm = struct2mat(dataTrainingNorm); 
+for i = 1:size(dataTrainingNorm, 1)
+   if dataTrainingNorm(i,1) == 1
+        dataCatheterNorm(end+1,:) = dataTrainingNorm(i,:); 
+   else 
+        dataTissueNorm(end+1,:) = dataTrainingNorm(i,:);  
+   end   
 end
+netTrainTargetsNorm = dataTrainingNorm(:,1);
+netTrainInputsNorm = dataTrainingNorm;
+netTrainInputsNorm(:,1) = [];
+dataCatheterNorm(1,:) = [];
+dataTissueNorm(1,:) = [];
+vars.normalization = {'numFields', 'dataTemp', 'i', 'temp'};
+clear(vars.normalization{:});
 
-%% Get not normalized data
-if isNormalize == 0
-    temp = struct2mat(dataTraining);
-    numFields = numel(fieldnames(dataTraining));
-    dataTissue = zeros(1, numFields, 'double');
-    dataCatheter = zeros(1, numFields, 'double');
-    for i = 1:size(temp, 1)
-       if temp(i,1) == 1
-            dataCatheter(end+1,:) = temp(i,:); 
-       else 
-            dataTissue(end+1,:) = temp(i,:);  
-       end   
-    end
-    netTrainTargets = temp(:,1);
-    netTrainInputs = temp;
-    netTrainInputs(:,1) = [];
-    dataCatheter(1,:) = [];
-    dataTissue(1,:) = [];
-    vars.normalization = {'numFields', 'dataTemp', 'i', 'temp'};
-    clear(vars.normalization{:});
+%% Get non-normalized data
+data = dataTraining;    
+numFields = numel(fieldnames(dataTraining));
+dataTissue = zeros(1, numFields, 'double');
+dataCatheter = zeros(1, numFields, 'double');
+dataTraining = struct2mat(dataTraining); 
+for i = 1:size(dataTraining, 1)
+   if dataTraining(i,1) == 1
+        dataCatheter(end+1,:) = dataTraining(i,:); 
+   else 
+        dataTissue(end+1,:) = dataTraining(i,:);  
+   end   
 end
+netTrainTargets = dataTraining(:,1);
+netTrainInputs = dataTraining;
+netTrainInputs(:,1) = [];
+dataCatheter(1,:) = [];
+dataTissue(1,:) = [];
+vars.normalization = {'numFields', 'dataTemp', 'i', 'temp'};
+clear(vars.normalization{:});
 
 %% Comptuing Bhattacharyya and Statistical distance
 if isGetDistance == 1
@@ -128,7 +131,6 @@ if exist('isGetDistance', 'var') == 1
 end
 
 %% Check for NaNs
-
 if isNormalize == 0
     if CheckNaN(netTrainInputs) > 0
         msg = sprintf('There are %d NaNs in your training data!', CheckNaN(netTrainInputs));

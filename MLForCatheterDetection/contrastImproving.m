@@ -1,4 +1,4 @@
-function [ resImage ] = contrastImproving( imgIn )
+function [resImage] = ContrastImproving( imgIn )
 %CONTRASTIMPROVING Summary 
 
 grayImage = imgIn;

@@ -1,4 +1,4 @@
-procImage = contrastImproving( img );
+procImage = contrastImproving(img);
 
 figure;
 imshowpair(img, procImage, 'montage');
