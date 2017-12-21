@@ -13,7 +13,7 @@ isFill = 0; % filling the holes (1) or not (0)
 openArea = 15;
 method = 'euclidean';
 
-nTimeframe = 1; %9
+nTimeframe = 17; %9
 ax = 'short'; % 'long1', 'long2'
     
 %XLS reading
