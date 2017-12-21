@@ -3,33 +3,25 @@
 clear all; close all; clc;
 
 % Initial variables
-isNormalize = 0;
-numFeats = 18; % 5, 9, 11, 18
-
-% Load the data
-if isNormalize == 1 
-%     load(strcat(num2str(numFeats), '_features_norm.mat'));
-    load('targets');
-elseif isNormalize == 0
-%     load(strcat(num2str(numFeats), '_features.mat'));
-    load('targets');
-end
-
-DataLoading;
-x = GetDataUsingModel(netTrainInputsNorm, 'D122:U122')';
-t = netTrainTargetsNorm';
-%%
-x = netTrainInputsNorm';
-t = netTrainTargets';
-% f = struct2mat(featuresAllNorm); % FOR TESTING
-% t = f(:,1)';
-% x = f(:,2:end)';
-
-netType = 'feed-forward'; % 'feed-forward', 'cascade', 'recurrent'
-netSize = 'small'; % small, mid , big
-trainingFunction = 'BR';    % training function  
+useNormalizedVersion = 1;   % use normalized type of data (1) or not (0)
+netType = 'feed-forward';   % 'feed-forward', 'cascade', 'recurrent'
+netSize = 'small';          % small, mid , big
+trainingFunction = 'LM';    % training function  
 isGPU = 'no';               % train a net on GPUs
 isParallel = 'no';          % train a net on a parallel pool
+
+% Load the data
+x = load('inputs.mat');
+t = load('targets.mat');
+if useNormalizedVersion == 1
+    x = x.netTrainInputsNorm';
+    t = t.netTrainTargetsNorm';
+elseif useNormalizedVersion == 0
+    x = x.netTrainInputs';
+    t = t.netTrainTargets';
+end
+
+% x = GetDataUsingModel(netTrainInputsNorm, 'D122:U122')';
 
 % Create a pool
 pool = gcp('nocreate');             

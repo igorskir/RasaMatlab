@@ -4,7 +4,7 @@ set(0, 'DefaultFigureWindowStyle', 'normal');
 currentFolder = pwd;
 addpath(genpath(pwd));
 isGetDistance = 0;
-isNormalize = 0;
+useNormalizeVersion = 1;
 
 %% Load the data                             
 dataTraining = struct('Presence', [], ...
@@ -59,7 +59,7 @@ vars.removingNaNs = {'fn', 'i'};
 clear(vars.removingNaNs{:});
 
 %% Get normalized data
-dataNorm = dataTrainingNorm;
+dataNorm = dataTrainingNorm; 
 numFields = numel(fieldnames(dataTrainingNorm));
 dataTissueNorm = zeros(1, numFields, 'double');
 dataCatheterNorm = zeros(1, numFields, 'double');
@@ -76,12 +76,12 @@ netTrainInputsNorm = dataTrainingNorm;
 netTrainInputsNorm(:,1) = [];
 dataCatheterNorm(1,:) = [];
 dataTissueNorm(1,:) = [];
-vars.normalization = {'numFields', 'dataTemp', 'i', 'temp'};
+vars.normalization = {'dataTrainingNorm', 'numFields', 'dataTemp', 'i', 'temp'};
 clear(vars.normalization{:});
 
 %% Get non-normalized data
-data = dataTraining;    
-numFields = numel(fieldnames(dataTraining));
+data = dataTraining;   
+numFields = numel(fieldnames(dataTraining));  
 dataTissue = zeros(1, numFields, 'double');
 dataCatheter = zeros(1, numFields, 'double');
 dataTraining = struct2mat(dataTraining); 
@@ -97,16 +97,16 @@ netTrainInputs = dataTraining;
 netTrainInputs(:,1) = [];
 dataCatheter(1,:) = [];
 dataTissue(1,:) = [];
-vars.normalization = {'numFields', 'dataTemp', 'i', 'temp'};
+vars.normalization = {'dataTraining', 'numFields', 'dataTemp', 'i', 'temp'};
 clear(vars.normalization{:});
 
 %% Comptuing Bhattacharyya and Statistical distance
 if isGetDistance == 1
     
-    if isNormalize == 0
+    if useNormalizeVersion == 0
         cathData = dataCatheter;
         tissueData = dataTissue;
-    elseif isNormalize == 1
+    elseif useNormalizeVersion == 1
         cathData = dataCatheterNorm;
         tissueData = dataTissueNorm;
     end
@@ -131,12 +131,12 @@ if exist('isGetDistance', 'var') == 1
 end
 
 %% Check for NaNs
-if isNormalize == 0
+if useNormalizeVersion == 0
     if CheckNaN(netTrainInputs) > 0
         msg = sprintf('There are %d NaNs in your training data!', CheckNaN(netTrainInputs));
         helpdlg(msg, 'Point Selection');
     end
-elseif isNormalize == 1
+elseif useNormalizeVersion == 1
     if CheckNaN(netTrainInputsNorm) > 0
         msg = sprintf('There are %d NaNs in your training data!', CheckNaN(netTrainInputs));
         helpdlg(msg, 'Point Selection');
