@@ -1,17 +1,25 @@
 %% Feature selection
-useNormData = 0; % 1 - yes, 0 - no
-funType = 3; % 1 - dicriminant, 2 - svm, 3 - knn, 4 - fsra
+%% Initial state
+clear all; close all; clc;
+addpath(genpath(pwd));
+clear currentFolder;
+
+useNormalizedData = 0; % 1 - yes, 0 - no (as IP said default value is euqal to 0)
+funType = 4; % 1 - dicriminant, 2 - svm, 3 - knn, 4 - fsra
 cvType = 1; % 1 - k-fold, 2 - Holdout
 featType = 2; % 1 - auto, 2 - 5 featues, 3 - 11 features
 options = statset('display', 'iter', 'MaxIter', 1000);
 direction = 'forward'; %backward of forward
 
-if useNormData == 1
-    x = netTrainInputsNorm;
-    y = netTrainTargetsNorm;
-else
-    x = netTrainInputs;
-    y = netTrainTargets;
+% Load the data
+x = load('inputs.mat');
+y = load('targets.mat');
+if useNormalizedData == 1
+    x = x.netTrainInputsNorm;
+    y = y.netTrainTargetsNorm;
+elseif useNormalizedData == 0
+    x = x.netTrainInputs;
+    y = y.netTrainTargets;
 end
 
 % Choose number of features
@@ -56,7 +64,7 @@ switch funType
                 yTrain, 'Distance', 'seuclidean'), xTest));
         funTypeStr = 'KNN';
     case 4
-        [~,~,~, fsraModel,~,~,fsraHistory] = stepwisefit(netTrainInputs, netTrainTargets, ...
+        [~,~,~, fsraModel,~,~,fsraHistory] = stepwisefit(x, y, ...
                                                          'display', 'on');
         if featType ~= 1
             if numFeatures <= size(fsraHistory.in, 1)
@@ -115,7 +123,7 @@ if funType == 4
 end
 
 %% Extract relevant input feature array (automatic SFS)
-[numRows, numCols] = size(netTrainInputs);
+[numRows, numCols] = size(x);
 netSelectInputs = zeros(numRows, 1);
 for i = 1:numCols
     if funType ~= 4
@@ -146,7 +154,7 @@ switch rng
 end
 
 model = xlsread(filename,sheet,xlRange);
-[numRows, numCols] = size(netTrainInputs);
+[numRows, numCols] = size(x);
 netSelectInputs = zeros(numRows, 1);
 for i = 1:numCols
         if model(1, i) == 1

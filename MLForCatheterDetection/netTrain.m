@@ -1,22 +1,24 @@
 %% DO NOT NORMOLIZE TARGRETS
 %% Initial state
 clear all; close all; clc;
+addpath(genpath(pwd));
+clear currentFolder;
 
 % Initial variables
-useNormalizedVersion = 1;   % use normalized type of data (1) or not (0)
+useNormalizedData = 1;   % use normalized type of data (1) or not (0)
 netType = 'feed-forward';   % 'feed-forward', 'cascade', 'recurrent'
 netSize = 'small';          % small, mid , big
-trainingFunction = 'LM';    % training function  
+trainingFunction = 'BR';    % training function  
 isGPU = 'no';               % train a net on GPUs
 isParallel = 'no';          % train a net on a parallel pool
 
 % Load the data
 x = load('inputs.mat');
 t = load('targets.mat');
-if useNormalizedVersion == 1
+if useNormalizedData == 1
     x = x.netTrainInputsNorm';
     t = t.netTrainTargetsNorm';
-elseif useNormalizedVersion == 0
+elseif useNormalizedData == 0
     x = x.netTrainInputs';
     t = t.netTrainTargets';
 end
@@ -106,6 +108,7 @@ net.divideMode = 'sample';  % Divide up every sample
 net.divideParam.trainRatio = 70/100;
 net.divideParam.valRatio = 15/100;
 net.divideParam.testRatio = 15/100;
+net.trainParam.max_fail = 10;
 
 % Number of epochs
 net.trainParam.epochs = 1000;
