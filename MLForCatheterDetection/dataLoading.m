@@ -1,5 +1,5 @@
 %% Initial state
-clear all; close all; clc;
+% clear all; close all; clc;
 set(0, 'DefaultFigureWindowStyle', 'normal');
 currentFolder = pwd;
 addpath(genpath(pwd));

@@ -5,9 +5,9 @@ addpath(genpath(pwd));
 clear currentFolder;
 
 useNormalizedData = 0; % 1 - yes, 0 - no (as IP said default value is euqal to 0)
-funType = 4; % 1 - dicriminant, 2 - svm, 3 - knn, 4 - fsra
+funType = 2; % 1 - dicriminant, 2 - svm, 3 - knn, 4 - fsra
 cvType = 1; % 1 - k-fold, 2 - Holdout
-featType = 2; % 1 - auto, 2 - 5 featues, 3 - 11 features
+featType = 2; % 1 - auto, 2 - 6 featues, 3 - 12 features
 options = statset('display', 'iter', 'MaxIter', 1000);
 direction = 'forward'; %backward of forward
 
@@ -28,11 +28,11 @@ switch featType
         featTypeStr = 'Auto';
         numFeatures = [];
     case 2
-        featTypeStr = '5';
-        numFeatures = 5;
+        featTypeStr = '6';
+        numFeatures = 6;
     case 3
-        featTypeStr = '11';
-        numFeatures = 11;        
+        featTypeStr = '12';
+        numFeatures = 12;        
 end
 
 tic;
