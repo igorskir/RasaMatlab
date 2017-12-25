@@ -33,25 +33,3 @@ if idxDice ~= 0
 end
 diceCases(j,1) = idxDice; 
 end
-%% MSER detector
-
-% %% Global variables
-% isVisual = 0;
-% nTimeframe = 9; %9
-% nSlice = 56; %60
-% scrSz = get(0, 'Screensize');
-% 
-% % % for i = 67:109 % FOR MEASUREMENT OF OBJECT NUMBER 
-% % % nSlice = i;
-% 
-
-
-% [image, count] = detectMSERblobs(BW);
-
-
-% if count ~= 1
-%     continue; %#ok<BRKCONT>
-% end
-
-% Dice calculation
-% idxDice = dice(image, );

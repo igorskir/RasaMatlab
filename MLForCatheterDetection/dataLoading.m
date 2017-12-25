@@ -1,10 +1,10 @@
 %% Initial state
-% clear all; close all; clc;
+clear all; close all; clc;
 set(0, 'DefaultFigureWindowStyle', 'normal');
 currentFolder = pwd;
 addpath(genpath(pwd));
-isGetDistance = 0;
-useNormalizeVersion = 1;
+isGetDistance = 1;
+useNormalizeVersion = 0;
 
 %% Load the data                             
 dataTraining = struct('Presence', [], ...
@@ -114,7 +114,7 @@ if isGetDistance == 1
     numFeats = size(cathData,2)-1;
     distBhatt = zeros(1, numFeats);
     distStat = zeros(1, numFeats);
-    distType = 'mahalanobis';
+    distType = 'euclidean';
     for i = 1:numFeats
         distBhatt(1, i) = GetBhattacharyyaDistance(cathData(:, i+1), tissueData(:, i+1)); 
         temp = pdist2(cathData(:, i+1), tissueData(:, i+1),...
