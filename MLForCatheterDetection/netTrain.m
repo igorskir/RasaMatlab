@@ -1,10 +1,10 @@
 %% DO NOT NORMOLIZE TARGRETS
 %% Initial state
-clear all; close all; clc;
+% clear all;  close all; clc;
 addpath(genpath(pwd));
-clear currentFolder;
 
 % Initial variables
+isVisual = 0;
 useNormalizedData = 1;   % use normalized type of data (1) or not (0)
 netType = 'feed-forward';   % 'feed-forward', 'cascade', 'recurrent'
 netSize = 'small';          % small, mid , big
@@ -23,7 +23,12 @@ elseif useNormalizedData == 0
     t = t.netTrainTargets';
 end
 
-% x = GetDataUsingModel(netTrainInputsNorm, 'D122:U122')';
+% Get the data based on the used model
+% x = GetDataUsingModel(x', 'D115:W115')';
+% Use of the particular model
+% model = zeros(1,20);
+% model(1,1) = 1;
+x = GetDataUsingModel(x', model)';
 
 % Create a pool
 pool = gcp('nocreate');             
@@ -108,7 +113,7 @@ net.divideMode = 'sample';  % Divide up every sample
 net.divideParam.trainRatio = 70/100;
 net.divideParam.valRatio = 15/100;
 net.divideParam.testRatio = 15/100;
-net.trainParam.max_fail = 10;
+net.trainParam.max_fail = 1000;
 
 % Number of epochs
 net.trainParam.epochs = 1000;
@@ -136,13 +141,11 @@ yind = vec2ind(y);
 percentErrors = sum(tind ~= yind)/numel(tind);
 
 % View the Network
-view(net)
+if isVisual == 1
+    view(net)
+end
 
 % Plots
-% Uncomment these lines to enable various plots.
-% figure, plotperform(tr)
-% figure, plottrainstate(tr)
-% figure, ploterrhist(e)
 
 % Training Confusion Plot Variables
 yTrn = net(x(:,tr.trainInd));
@@ -161,10 +164,37 @@ yAll = net(x);
 tAll = t;
 
 % Plot Confusion
-figure, plotconfusion(tTrn, yTrn, 'Training', ...
-                      tVal, yVal, 'Validation', ...
-                      tTst, yTst, 'Test', ...
-                      tAll, yAll, 'Overall')
-figure, plotconfusion(t,y)
-% figure, plotroc(t,y)
+if isVisual == 1
+    figure, plotconfusion(tTrn, yTrn, 'Training', ...
+                          tVal, yVal, 'Validation', ...
+                          tTst, yTst, 'Test', ...
+                          tAll, yAll, 'Overall')
+    figure, plotconfusion(t,y)
+    % Uncomment these lines to enable various plots.
+    % figure, plotperform(tr)
+    % figure, plottrainstate(tr)
+    % figure, ploterrhist(e)
+    % figure, plotroc(t,y)
+end
 
+% Get classification rate
+[~, confMatrix] = confusion(tAll,yAll);
+confMatrix = confMatrix';
+cathClassRate = confMatrix(2,2)/sum(confMatrix(:,2));
+fprintf('Catheter Classification Rate: %.2f%%\n', 100*cathClassRate);
+fprintf('Percentage Incorrect Classification : %.2f%%\n', 100*(1 - cathClassRate));
+
+
+% EXTRA
+% 
+% rngBin12 = 'D111:W111'; % 62.3%
+% rngDA12 = 'D44:W44'; % 73.4%
+% rngSVM12 = 'D45:W45'; % 76.9%
+% rngKNN12 = 'D46:W46'; % 74.6%
+% rngFSRA12 = 'D47:W47'; % 75.5%
+% 
+% rngBin6 = 'D111:W111'; % 64.4%
+% rngDA6 = 'D51:W51'; % 59.4%
+% rngSVM6 = 'D52:W52'; % 60.4%
+% rngKNN6 = 'D53:W53'; % 68.6%
+% rngFSRA6 = 'D54:W54'; % 45.5%

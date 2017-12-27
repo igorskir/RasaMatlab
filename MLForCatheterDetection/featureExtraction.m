@@ -5,7 +5,7 @@ currentFolder = pwd;
 addpath(genpath(pwd));
 
 %% Global variables
-isSeparate = 1; % perform separation of catheter and pigtail (1) or not
+isSeparate = 0; % perform separation of catheter and pigtail (1) or not
 isLabel = 1; % labeling (1) or without labeling (0)
 isNormalize = 1; % normalization (1) or no normaliztion (0)
 isVisual = 1; % visualize (1) or not(0)
@@ -13,7 +13,7 @@ isFill = 0; % filling the holes (1) or not (0)
 openArea = 15;
 method = 'euclidean';
 
-nTimeframe = 17; %9
+nTimeframe = 1; %9
 ax = 'short'; % 'long1', 'long2'
     
 %XLS reading

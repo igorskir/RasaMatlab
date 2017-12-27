@@ -139,12 +139,13 @@ end
 netSelectInputs(:,1) = [];
 
 %% Extract relevant input feature array (manual SFS)
-filename = 'D:\Clouds\Google Drive\RASA\Matlab\12. Catheter ML\Presentation\Feature engineering.xlsm';
-sheet = 5;
-rng = 'small'; % all - 18, big - 11, mid - 9, small - 5
+filename = 'D:\RASA Lab\MLForCatheterDetection\!Calculations\Feature engineering.xlsm';
+sheet = 6;
+useNormalizedData = 1;
+rng = 'all'; % all - 18, big - 11, mid - 9, small - 5
 switch rng
     case 'all'
-        xlRange = 'D110:U110';
+        xlRange = 'D111:W111';
     case 'big'
         xlRange = 'D111:U111';  
     case 'mid'
@@ -153,7 +154,18 @@ switch rng
         xlRange = 'D113:U113';
 end
 
-model = xlsread(filename,sheet,xlRange);
+% Load the data
+x = load('inputs.mat');
+y = load('targets.mat');
+if useNormalizedData == 1
+    x = x.netTrainInputsNorm;
+    y = y.netTrainTargetsNorm;
+elseif useNormalizedData == 0
+    x = x.netTrainInputs;
+    y = y.netTrainTargets;
+end
+
+model = xlsread(filename, sheet, xlRange);
 [numRows, numCols] = size(x);
 netSelectInputs = zeros(numRows, 1);
 for i = 1:numCols

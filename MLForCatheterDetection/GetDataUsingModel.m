@@ -12,11 +12,16 @@ function outputArray = GetDataUsingModel(inputs, varargin)
         end
         
         % Get the model
-        cathDataFile = 'D:\RASA Lab\MLForCatheterDetection\Presentation\Feature engineering.xlsm';
-        sheet = 'Catheter analysis';
-        model = xlsread(cathDataFile, sheet, xlRange);
+        if ischar(varargin{1,1})
+            cathDataFile = 'D:\RASA Lab\MLForCatheterDetection\!Calculations\Feature engineering.xlsm';
+            sheet = 'Catheter analysis';
+            model = xlsread(cathDataFile, sheet, xlRange);
+        else
+            model = xlRange;
+        end
         numCols = numel(model);
         numRows = size(inputs, 1);
+%         numRows = size(inputs, 2);
         
         if size(inputs,2) ~= numCols
             error('Input array and your model should have the same number of columns')
@@ -32,7 +37,7 @@ function outputArray = GetDataUsingModel(inputs, varargin)
         end
         
     catch ME
-		errorMessage = sprintf('Error in GetWeights().\n The error reported by MATLAB is:\n\n%s', ME.message);
+		errorMessage = sprintf('Error in GetDataUsingModel().\n The error reported by MATLAB is:\n\n%s', ME.message);
 		uiwait(warndlg(errorMessage));
 		set(handles.txtInfo, 'String', errorMessage);
     end
