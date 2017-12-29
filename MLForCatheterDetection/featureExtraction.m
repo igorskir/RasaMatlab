@@ -13,7 +13,7 @@ isFill = 0; % filling the holes (1) or not (0)
 openArea = 15;
 method = 'euclidean';
 
-nTimeframe = 1; %9
+nTimeframe = 14; %9
 ax = 'short'; % 'long1', 'long2'
     
 %XLS reading
@@ -35,7 +35,6 @@ cathData = xlsread(cathDataFile,sheet,xlRange);
 minSlice = cathData(1,nTimeframe);
 maxSlice = cathData(2,nTimeframe);
 sliceRange = minSlice:maxSlice; % 35:55
-% sliceRange = 87;
 scrSz = get(0, 'Screensize');
 featuresAll = struct([]);
 featuresAllNorm = struct([]);
@@ -58,6 +57,10 @@ for nSlice = sliceRange
     BW = bwareaopen(BW, openArea);
     if isSeparate == 1
         BW = GetSeparatedRegions(BW, method, ax);
+    else
+%         se = strel('disk', 2);
+        se = strel('ball', 3, 0, 0);
+        BW = imopen(BW, se);
     end
     if isVisual == 0
         str1 = sprintf('Binarized image');

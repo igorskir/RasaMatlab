@@ -1,10 +1,10 @@
-function outputArray = GetDataUsingModel(inputs, varargin)
+function outputArray = GetDataUsingModel(inputs, isLoadSeparatedData, varargin)
     try       
-        defaultRange = 'D122:U122';    
+        defaultRange = 'D115:W115';    
         switch nargin
-            case 1
-                xlRange = defaultRange;
             case 2
+                xlRange = defaultRange;
+            case 3
                 xlRange = varargin{1,1};
             otherwise
                 disp('Unexpected inputs');
@@ -13,7 +13,11 @@ function outputArray = GetDataUsingModel(inputs, varargin)
         
         % Get the model
         if ischar(varargin{1,1})
-            cathDataFile = 'D:\RASA Lab\MLForCatheterDetection\!Calculations\Feature engineering.xlsm';
+            if isLoadSeparatedData == 0
+                cathDataFile = 'D:\RASA Lab\MLForCatheterDetection\!Calculations\Feature engineering (not separ.).xlsm';
+            else
+                cathDataFile = 'D:\RASA Lab\MLForCatheterDetection\!Calculations\Feature engineering (separ.).xlsm';
+            end         
             sheet = 'Catheter analysis';
             model = xlsread(cathDataFile, sheet, xlRange);
         else

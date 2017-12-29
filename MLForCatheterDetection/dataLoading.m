@@ -4,7 +4,8 @@ set(0, 'DefaultFigureWindowStyle', 'normal');
 currentFolder = pwd;
 addpath(genpath(pwd));
 isGetDistance = 1;
-useNormalizeVersion = 0;
+useNormalizedVersion = 0;
+isLoadSeparatedData = 0;
 
 %% Load the data                             
 dataTraining = struct('Presence', [], ...
@@ -31,7 +32,12 @@ dataTraining = struct('Presence', [], ...
 dataTrainingNorm = dataTraining;
 
 % Load training data
-trainingFolder = strcat(currentFolder, '\Labeled data\LV Catheter 07 v.6 (20 features + separation)\Training');
+
+if isLoadSeparatedData == 1
+    trainingFolder = strcat(currentFolder, '\Labeled data\LV Catheter 07 v.6 (20 features + separation)\Training');
+else
+    trainingFolder = strcat(currentFolder, '\Labeled data\LV Catheter 07 v.7 (20 features)\Training');
+end
 cd(trainingFolder);
 s = what;
 matfiles = s.mat;
@@ -51,7 +57,7 @@ clear(vars.loadTrainData{:});
 
 %% Removing NaNs
 fn = fieldnames(dataTraining);
-for i = 1:numel(fn) 
+for i = 1:numel(fn)
     dataTraining = dataTraining(~isnan([dataTraining.(fn{i})]));
     dataTrainingNorm = dataTrainingNorm(~isnan([dataTrainingNorm.(fn{i})]));
 end
@@ -103,10 +109,10 @@ clear(vars.normalization{:});
 %% Comptuing Bhattacharyya and Statistical distance
 if isGetDistance == 1
     
-    if useNormalizeVersion == 0
+    if useNormalizedVersion == 0
         cathData = dataCatheter;
         tissueData = dataTissue;
-    elseif useNormalizeVersion == 1
+    elseif useNormalizedVersion == 1
         cathData = dataCatheterNorm;
         tissueData = dataTissueNorm;
     end
@@ -131,12 +137,12 @@ if exist('isGetDistance', 'var') == 1
 end
 
 %% Check for NaNs
-if useNormalizeVersion == 0
+if useNormalizedVersion == 0
     if CheckNaN(netTrainInputs) > 0
         msg = sprintf('There are %d NaNs in your training data!', CheckNaN(netTrainInputs));
         helpdlg(msg, 'Point Selection');
     end
-elseif useNormalizeVersion == 1
+elseif useNormalizedVersion == 1
     if CheckNaN(netTrainInputsNorm) > 0
         msg = sprintf('There are %d NaNs in your training data!', CheckNaN(netTrainInputs));
         helpdlg(msg, 'Point Selection');

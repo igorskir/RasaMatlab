@@ -7,14 +7,21 @@ addpath(genpath(pwd));
 isVisual = 0;
 useNormalizedData = 1;   % use normalized type of data (1) or not (0)
 netType = 'feed-forward';   % 'feed-forward', 'cascade', 'recurrent'
-netSize = 'small';          % small, mid , big
+netSize = 'small';          % small, mid, big
 trainingFunction = 'BR';    % training function  
 isGPU = 'no';               % train a net on GPUs
 isParallel = 'no';          % train a net on a parallel pool
+isLoadSeparatedData = 1;    % separated data = 1, not separated data = 0
 
 % Load the data
-x = load('inputs.mat');
-t = load('targets.mat');
+if isLoadSeparatedData == 0
+    x = load('inputs (not separated).mat');
+    t = load('targets (not separated).mat');
+else
+    x = load('inputs (separated).mat');
+    t = load('targets (separated).mat');
+end
+
 if useNormalizedData == 1
     x = x.netTrainInputsNorm';
     t = t.netTrainTargetsNorm';
@@ -24,11 +31,12 @@ elseif useNormalizedData == 0
 end
 
 % Get the data based on the used model
-% x = GetDataUsingModel(x', 'D115:W115')';
+x = GetDataUsingModel(x', isLoadSeparatedData, 'D115:W115')';
 % Use of the particular model
 % model = zeros(1,20);
 % model(1,1) = 1;
-x = GetDataUsingModel(x', model)';
+
+% x = GetDataUsingModel(x', model)';
 
 % Create a pool
 pool = gcp('nocreate');             
@@ -113,7 +121,7 @@ net.divideMode = 'sample';  % Divide up every sample
 net.divideParam.trainRatio = 70/100;
 net.divideParam.valRatio = 15/100;
 net.divideParam.testRatio = 15/100;
-net.trainParam.max_fail = 1000;
+net.trainParam.max_fail = 6;
 
 % Number of epochs
 net.trainParam.epochs = 1000;
@@ -182,7 +190,7 @@ end
 confMatrix = confMatrix';
 cathClassRate = confMatrix(2,2)/sum(confMatrix(:,2));
 fprintf('Catheter Classification Rate: %.2f%%\n', 100*cathClassRate);
-fprintf('Percentage Incorrect Classification : %.2f%%\n', 100*(1 - cathClassRate));
+fprintf('Catheter Misclassification Rate: %.2f%%\n', 100*(1 - cathClassRate));
 
 
 % EXTRA
