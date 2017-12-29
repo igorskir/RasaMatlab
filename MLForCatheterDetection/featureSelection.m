@@ -10,16 +10,23 @@ cvType = 1; % 1 - k-fold, 2 - Holdout
 featType = 1; % 1 - auto, 2 - 6 featues, 3 - 12 features
 options = statset('display', 'iter', 'MaxIter', 1000);
 direction = 'forward'; %backward of forward
+isLoadSeparatedData = 0;    % separated data = 1, not separated data = 0
 
 % Load the data
-x = load('inputs.mat');
-y = load('targets.mat');
+if isLoadSeparatedData == 0
+    x = load('inputs (not separated).mat');
+    t = load('targets (not separated).mat');
+else
+    x = load('inputs (separated).mat');
+    t = load('targets (separated).mat');
+end
+
 if useNormalizedData == 1
-    x = x.netTrainInputsNorm;
-    y = y.netTrainTargetsNorm;
+    x = x.netTrainInputsNorm';
+    t = t.netTrainTargetsNorm';
 elseif useNormalizedData == 0
-    x = x.netTrainInputs;
-    y = y.netTrainTargets;
+    x = x.netTrainInputs';
+    t = t.netTrainTargets';
 end
 
 % Choose number of features

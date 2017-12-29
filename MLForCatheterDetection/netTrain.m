@@ -6,12 +6,12 @@ addpath(genpath(pwd));
 % Initial variables
 isVisual = 0;
 useNormalizedData = 1;   % use normalized type of data (1) or not (0)
-netType = 'feed-forward';   % 'feed-forward', 'cascade', 'recurrent'
+netType = 'cascade';   % 'feed-forward', 'cascade', 'recurrent'
 netSize = 'small';          % small, mid, big
 trainingFunction = 'BR';    % training function  
 isGPU = 'no';               % train a net on GPUs
 isParallel = 'no';          % train a net on a parallel pool
-isLoadSeparatedData = 1;    % separated data = 1, not separated data = 0
+isLoadSeparatedData = 0;    % separated data = 1, not separated data = 0
 
 % Load the data
 if isLoadSeparatedData == 0
@@ -76,7 +76,9 @@ end
 % Choose a layer size
 switch netSize
     case 'small'
-        hiddenLayerSize = [20, 10, 5];
+%         hiddenLayerSize = [20, 10, 5]; % small 93.60%
+%         hiddenLayerSize = [10, 20, 5]; % small 92.87%
+        hiddenLayerSize = [5, 10, 20]; % small 91.82%
     case 'mid'
         hiddenLayerSize = [40, 20, 10];
     case 'big'
@@ -121,7 +123,7 @@ net.divideMode = 'sample';  % Divide up every sample
 net.divideParam.trainRatio = 70/100;
 net.divideParam.valRatio = 15/100;
 net.divideParam.testRatio = 15/100;
-net.trainParam.max_fail = 6;
+net.trainParam.max_fail = 10;
 
 % Number of epochs
 net.trainParam.epochs = 1000;
