@@ -7,7 +7,7 @@ clear currentFolder;
 useNormalizedData = 0; % 1 - yes, 0 - no (as IP said default value is euqal to 0)
 funType = 4; % 1 - dicriminant, 2 - svm, 3 - knn, 4 - fsra
 cvType = 1; % 1 - k-fold, 2 - Holdout
-featType = 1; % 1 - auto, 2 - 6 featues, 3 - 12 features
+featType = 3; % 1 - auto, 2 - 6 featues, 3 - 12 features
 options = statset('display', 'iter', 'MaxIter', 1000);
 direction = 'forward'; %backward of forward
 isLoadSeparatedData = 0;    % separated data = 1, not separated data = 0
@@ -15,18 +15,18 @@ isLoadSeparatedData = 0;    % separated data = 1, not separated data = 0
 % Load the data
 if isLoadSeparatedData == 0
     x = load('inputs (not separated).mat');
-    t = load('targets (not separated).mat');
+    y = load('targets (not separated).mat');
 else
     x = load('inputs (separated).mat');
-    t = load('targets (separated).mat');
+    y = load('targets (separated).mat');
 end
 
 if useNormalizedData == 1
-    x = x.netTrainInputsNorm';
-    t = t.netTrainTargetsNorm';
+    x = x.netTrainInputsNorm;
+    y = y.netTrainTargetsNorm;
 elseif useNormalizedData == 0
-    x = x.netTrainInputs';
-    t = t.netTrainTargets';
+    x = x.netTrainInputs;
+    y = y.netTrainTargets;
 end
 
 % Choose number of features
