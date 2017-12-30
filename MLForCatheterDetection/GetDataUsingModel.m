@@ -14,9 +14,9 @@ function outputArray = GetDataUsingModel(inputs, isLoadSeparatedData, varargin)
         % Get the model
         if ischar(varargin{1,1})
             if isLoadSeparatedData == 0
-                cathDataFile = 'D:\RASA Lab\MLForCatheterDetection\!Calculations\Feature engineering (not separ.).xlsm';
+                cathDataFile = 'D:\RASA Lab\MLForCatheterDetection\!Calculations\Feature engineering (not separated).xlsm';
             else
-                cathDataFile = 'D:\RASA Lab\MLForCatheterDetection\!Calculations\Feature engineering (separ.).xlsm';
+                cathDataFile = 'D:\RASA Lab\MLForCatheterDetection\!Calculations\Feature engineering (separated).xlsm';
             end         
             sheet = 'Catheter analysis';
             model = xlsread(cathDataFile, sheet, xlRange);

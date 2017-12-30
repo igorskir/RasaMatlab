@@ -17,7 +17,6 @@ nTimeframe = 14; %9
 ax = 'short'; % 'long1', 'long2'
     
 %XLS reading
-% cathDataFile = 'D:\RASA Lab\MLForCatheterDetection\Presentation\LV Catheter 07.xlsx';
 cathDataFile = 'LV Catheter 07.xlsx';
 sheet = 'Sheet1';
 switch ax

@@ -120,7 +120,7 @@ if isGetDistance == 1
     numFeats = size(cathData,2)-1;
     distBhatt = zeros(1, numFeats);
     distStat = zeros(1, numFeats);
-    distType = 'euclidean';
+    distType = 'mahalanobis'; %mahalanobis and euclidean
     for i = 1:numFeats
         distBhatt(1, i) = GetBhattacharyyaDistance(cathData(:, i+1), tissueData(:, i+1)); 
         temp = pdist2(cathData(:, i+1), tissueData(:, i+1),...

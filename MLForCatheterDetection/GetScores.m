@@ -1,7 +1,7 @@
 %% Estimate score of distribution
 clc; clear;
 addpath('MAT files');
-load data;
+load('data (not separ.).mat');
 binCounts = 10:2:30;
 featureCount = size(dataCatheter,2);
 scores = zeros(numel(binCounts),featureCount);
