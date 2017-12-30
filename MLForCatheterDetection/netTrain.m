@@ -5,8 +5,8 @@ addpath(genpath(pwd));
 
 % Initial variables
 isVisual = 0;
-useNormalizedData = 1;   % use normalized type of data (1) or not (0)
-netType = 'cascade';   % 'feed-forward', 'cascade', 'recurrent'
+useNormalizedData = 1;      % use normalized type of data (1) or not (0)
+netType = 'feed-forward';        % 'feed-forward', 'cascade', 'recurrent'
 netSize = 'small';          % small, mid, big
 trainingFunction = 'BR';    % training function  
 isGPU = 'no';               % train a net on GPUs
@@ -76,9 +76,7 @@ end
 % Choose a layer size
 switch netSize
     case 'small'
-%         hiddenLayerSize = [20, 10, 5]; % small 93.60%
-%         hiddenLayerSize = [10, 20, 5]; % small 92.87%
-        hiddenLayerSize = [5, 10, 20]; % small 91.82%
+        hiddenLayerSize = [20, 10, 5];
     case 'mid'
         hiddenLayerSize = [40, 20, 10];
     case 'big'
