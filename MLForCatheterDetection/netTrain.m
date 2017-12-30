@@ -31,7 +31,8 @@ elseif useNormalizedData == 0
 end
 
 % Get the data based on the used model
-x = GetDataUsingModel(x', isLoadSeparatedData, 'D115:W115')';
+[x, numFeatures] = GetDataUsingModel(x', isLoadSeparatedData, 'D115:W115');
+x = x';
 % Use of the particular model
 % model = zeros(1,20);
 % model(1,1) = 1;
@@ -185,24 +186,29 @@ if isVisual == 1
     % figure, plotroc(t,y)
 end
 
-% Get classification rate
+% Get the results
 [~, confMatrix] = confusion(tAll,yAll);
 confMatrix = confMatrix';
-cathClassRate = confMatrix(2,2)/sum(confMatrix(:,2));
-fprintf('Catheter Classification Rate: %.2f%%\n', 100*cathClassRate);
-fprintf('Catheter Misclassification Rate: %.2f%%\n', 100*(1 - cathClassRate));
 
+accuracyVals = zeros(1,10);
+accuracyVals(1,1) = confMatrix(1,1)/sum(confMatrix(:,1));
+accuracyVals(1,2) = confMatrix(2,2)/sum(confMatrix(:,2));
+accuracyVals(1,3) = 1 - 1/((confMatrix(1,1) + confMatrix(2,2))/(confMatrix(2,1) + confMatrix(1,2)));
+accuracyVals(1,4) = 0;
+accuracyVals(1,5) = 1 - accuracyVals(1,1);
+accuracyVals(1,6) = 1 - accuracyVals(1,2);
+accuracyVals(1,7) = 1 - accuracyVals(1,3);
+accuracyVals(1,8) = 0;
+accuracyVals(1,9) = performance;
+accuracyVals(1,10) = tr.time(end);
+stopVal = tr.stop;
+netResult = {accuracyVals stopVal};
 
-% EXTRA
-% 
-% rngBin12 = 'D111:W111'; % 62.3%
-% rngDA12 = 'D44:W44'; % 73.4%
-% rngSVM12 = 'D45:W45'; % 76.9%
-% rngKNN12 = 'D46:W46'; % 74.6%
-% rngFSRA12 = 'D47:W47'; % 75.5%
-% 
-% rngBin6 = 'D111:W111'; % 64.4%
-% rngDA6 = 'D51:W51'; % 59.4%
-% rngSVM6 = 'D52:W52'; % 60.4%
-% rngKNN6 = 'D53:W53'; % 68.6%
-% rngFSRA6 = 'D54:W54'; % 45.5%
+fprintf('Catheter Classification Rate: %.2f%%\n', 100*accuracyVals(1,1));
+fprintf('Catheter Misclassification Rate: %.2f%%\n', 100*accuracyVals(1,5));
+
+% Save net-file
+netFilename = strcat(netType, '_', num2str(numFeatures), '_feats_[', num2str(hiddenLayerSize), ']');
+cd('Net tests')
+save(netFilename,'net','tr');
+cd ..\

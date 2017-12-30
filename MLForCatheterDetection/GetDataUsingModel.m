@@ -1,4 +1,4 @@
-function outputArray = GetDataUsingModel(inputs, isLoadSeparatedData, varargin)
+function [outputArray, numFeatures] = GetDataUsingModel(inputs, isLoadSeparatedData, varargin)
     try       
         defaultRange = 'D115:W115';    
         switch nargin
@@ -26,6 +26,7 @@ function outputArray = GetDataUsingModel(inputs, isLoadSeparatedData, varargin)
         else
             model = xlRange;
         end
+        numFeatures = sum(model);
         numCols = numel(model);
         numRows = size(inputs, 1);
 %         numRows = size(inputs, 2);
