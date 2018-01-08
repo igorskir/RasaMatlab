@@ -1,13 +1,13 @@
 %% DO NOT NORMOLIZE TARGRETS
 %% Initial state
-% clear all;  close all; clc;
+clear all;  close all; clc;
 addpath(genpath(pwd));
 
 % Initial variables
 isVisual = 0;
 useNormalizedData = 1;      % use normalized type of data (1) or not (0)
-netType = 'feed-forward';        % 'feed-forward', 'cascade', 'recurrent'
-netSize = 'small';          % small, mid, big
+netType = 'recurrent';        % 'feed-forward', 'cascade', 'recurrent'
+netSize = 'big';          % small, mid, big
 trainingFunction = 'BR';    % training function  
 isGPU = 'no';               % train a net on GPUs
 isParallel = 'no';          % train a net on a parallel pool
@@ -36,7 +36,6 @@ x = x';
 % Use of the particular model
 % model = zeros(1,20);
 % model(1,1) = 1;
-
 % x = GetDataUsingModel(x', model)';
 
 % Create a pool
@@ -81,7 +80,7 @@ switch netSize
     case 'mid'
         hiddenLayerSize = [40, 20, 10];
     case 'big'
-        hiddenLayerSize = [80, 40, 20];
+        hiddenLayerSize = [60, 30, 15];
     otherwise
         disp('Choose the size of network proprely')
 end
@@ -204,11 +203,12 @@ accuracyVals(1,10) = tr.time(end);
 stopVal = tr.stop;
 netResult = {accuracyVals stopVal};
 
-fprintf('Catheter Classification Rate: %.2f%%\n', 100*accuracyVals(1,1));
-fprintf('Catheter Misclassification Rate: %.2f%%\n', 100*accuracyVals(1,5));
+fprintf('Catheter Classification Rate: %.2f%%\n', 100*accuracyVals(1,2));
+fprintf('Catheter Misclassification Rate: %.2f%%\n', 100*accuracyVals(1,6));
 
 % Save net-file
-netFilename = strcat(netType, '_', num2str(numFeatures), '_feats_[', num2str(hiddenLayerSize), ']');
+layersName = [num2str(hiddenLayerSize(1,1)), ' ', num2str(hiddenLayerSize(1,2)), ' ', num2str(hiddenLayerSize(1,3))];
+netFilename = [netType, ' ', num2str(numFeatures), '_features [', layersName, ']'];
 cd('Net tests')
-save(netFilename,'net','tr');
+save(netFilename,'net','tr', 'x', 'y', 't');
 cd ..\
