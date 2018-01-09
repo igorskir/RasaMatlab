@@ -21,7 +21,7 @@ function [outputArray, numFeatures] = GetDataUsingModel(inputs, isLoadSeparatedD
 %                 cathDataFile = 'D:\RASA Lab\MLForCatheterDetection\!Calculations\Feature engineering (separated).xlsm';
                 cathDataFile = 'Feature engineering (separated).xlsm';
             end         
-            sheet = 'Catheter analysis';
+            sheet = 'Models';
             model = xlsread(cathDataFile, sheet, xlRange);
         else
             model = xlRange;

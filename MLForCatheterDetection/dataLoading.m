@@ -35,8 +35,10 @@ dataTrainingNorm = dataTraining;
 
 if isLoadSeparatedData == 1
     trainingFolder = strcat(currentFolder, '\Labeled data\LV Catheter 07 v.6 (20 features + separation)\Training');
+%     trainingFolder = strcat(currentFolder, '\Labeled data\LV Catheter 07 v.6 (20 features + separation)\Simulation');
 else
     trainingFolder = strcat(currentFolder, '\Labeled data\LV Catheter 07 v.7 (20 features)\Training');
+%     trainingFolder = strcat(currentFolder, '\Labeled data\LV Catheter 07 v.7 (20 features)\Simulation');
 end
 cd(trainingFolder);
 s = what;
