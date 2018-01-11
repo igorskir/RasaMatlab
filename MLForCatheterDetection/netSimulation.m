@@ -6,7 +6,7 @@ addpath(genpath(pwd));
 isVisual = 0;
 useNormalizedData = 1;      % use normalized type of data (1) or not (0)
 isLoadSeparatedData = 0;    % separated data = 1, not separated data = 0
-sfsType = 'SBFS';
+sfsType = 'Full';           % Full, DA, SVM, KNN, FSRA, BDFS, OFS, SBFS
 numFeats = 12;
 
 % Load the data
@@ -17,16 +17,16 @@ else
 end
 
 if useNormalizedData == 1
-    simInputs = simData.netTrainInputsNorm';
-    simTargets = simData.netTrainTargetsNorm';
+    inputs = simData.netTrainInputsNorm';
+    targets = simData.netTrainTargetsNorm';
 elseif useNormalizedData == 0
-    simInputs = simData.netTrainInputs';
-    simTargets = simData.netTrainTargets';
+    inputs = simData.netTrainInputs';
+    targets = simData.netTrainTargets';
 end
 
 % Choose SFS model
 switch sfsType
-    case 'FULL'
+    case 'Full'
          modelRange = 'D5:W5';
     case 'DA'
         if numFeats == 12
@@ -73,7 +73,45 @@ switch sfsType
 end
         
 % Get the data based on the used model
-[modelInputs, numFeatures] = GetDataUsingModel(simInputs', isLoadSeparatedData, modelRange);
-modelInputs = modelInputs';
-modelTargets = simTargets;
+[simInputs, numFeatures] = GetDataUsingModel(inputs', isLoadSeparatedData, modelRange);
+simInputs = simInputs';
+simTargets = targets';
+%%
+% Load net object HERE
+%%
+% Network application on the independent data 
+[numRows, numCols] = size(simInputs);
+simOutputs = zeros(numCols,1);
+tic;
+for i = 1:numCols
+    simOutputs(i,:) = round(net(simInputs(:,i)));
+end
+toc;
+
+[~, confMatrix] = confusion(simTargets', simOutputs');
+confMatrix = confMatrix';
+
+numRightTissueCases = confMatrix(1,1); 
+numWrongTissueCases = confMatrix(2,1);
+numRightCathCases = confMatrix(2,2); 
+numWrongCathCases = confMatrix(1,2);
+numTissueCases = numRightTissueCases + numWrongTissueCases;
+numCathCases = numRightCathCases + numWrongCathCases;
+
+percentTissueAccuracy = numRightTissueCases / numTissueCases;
+percentTissueErrors = 1 - percentTissueAccuracy;
+percentCathAccuracy = numRightCathCases / numCathCases;
+percentCathErrors = 1 - percentCathAccuracy;
+
+fprintf('\n*************************************************************************')
+fprintf('\n \t \t Catheter classification rate: %.3f (%.d right cases out of %.d) \n', ...
+         percentCathAccuracy, numRightCathCases, numCathCases)
+fprintf('\n \t \t Catheter misclassification rate: %.3f (%.d wrong cases out of %.d) \n', ...
+        percentCathErrors, numWrongCathCases, numCathCases)
+fprintf('\n \t \t Tissue classification rate: %.3f (%.d right cases out of %.d) \n', ...
+         percentTissueAccuracy, numRightTissueCases, numTissueCases)
+fprintf('\n \t \t Tissue misclassification rate: %.3f (%.d wrong cases out of %.d) \n', ...
+        percentTissueErrors, numWrongTissueCases, numTissueCases)   
+fprintf('************************************************************************* \n')
+
 

@@ -6,8 +6,10 @@ addpath(genpath(pwd));
 % Initial variables
 isVisual = 0;
 useNormalizedData = 1;      % use normalized type of data (1) or not (0)
+sfsType = 'KNN';           % Full, DA, SVM, KNN, FSRA, BDFS, OFS, SBFS
+numFeats = 12;              % 20 (Full), 12 and 6    
 netType = 'recurrent';        % 'feed-forward', 'cascade', 'recurrent'
-netSize = 'big';          % small, mid, big
+netSize = 'small';          % small, mid, big
 trainingFunction = 'BR';    % training function  
 isGPU = 'no';               % train a net on GPUs
 isParallel = 'no';          % train a net on a parallel pool
@@ -30,8 +32,56 @@ elseif useNormalizedData == 0
     t = t.netTrainTargets';
 end
 
+% Choose SFS model
+switch sfsType
+    case 'FULL'
+         modelRange = 'D5:W5';
+    case 'DA'
+        if numFeats == 12
+            modelRange = 'D6:W6';
+        elseif numFeats == 6
+            modelRange = 'D17:W17';
+        end
+    case 'SVM'
+        if numFeats == 12
+            modelRange = 'D7:W7';
+        elseif numFeats == 6
+            modelRange = 'D18:W18';
+        end
+    case 'KNN'
+        if numFeats == 12
+            modelRange = 'D8:W8';
+        elseif numFeats == 6
+            modelRange = 'D19:W19'; 
+        end
+    case 'FSRA'
+        if numFeats == 12
+            modelRange = 'D9:W9';
+        elseif numFeats == 6
+            modelRange = 'D20:W20';  
+        end
+    case 'BDFS'
+        if numFeats == 12
+            modelRange = 'D10:W10';
+        elseif numFeats == 6
+            modelRange = 'D21:W21'; 
+        end
+    case 'OFS'
+        if numFeats == 12
+            modelRange = 'D11:W11';
+        elseif numFeats == 6
+            modelRange = 'D22:W22';  
+        end
+    case 'SBFS'
+        if numFeats == 12
+            modelRange = 'D12:W12';
+        elseif numFeats == 6
+            modelRange = 'D23:W23';  
+        end
+end
+
 % Get the data based on the used model
-[x, numFeatures] = GetDataUsingModel(x', isLoadSeparatedData, 'D115:W115');
+[x, numFeatures] = GetDataUsingModel(x', isLoadSeparatedData, modelRange);
 x = x';
 % Use of the particular model
 % model = zeros(1,20);
@@ -208,7 +258,11 @@ fprintf('Catheter Misclassification Rate: %.2f%%\n', 100*accuracyVals(1,6));
 
 % Save net-file
 layersName = [num2str(hiddenLayerSize(1,1)), ' ', num2str(hiddenLayerSize(1,2)), ' ', num2str(hiddenLayerSize(1,3))];
-netFilename = [netType, ' ', num2str(numFeatures), '_features [', layersName, ']'];
+if strcmp(sfsType, 'Full')
+    netFilename = [netType, ' ', num2str(numFeatures), '_features [', layersName, ']'];
+else
+    netFilename = [netType, ' ', num2str(numFeatures), '_features [', layersName, '] ', sfsType];
+end
 cd('Net tests')
-save(netFilename,'net','tr', 'x', 'y', 't');
+save(netFilename, 'net', 'tr', 'x', 'y', 't');
 cd ..\

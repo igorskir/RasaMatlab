@@ -1,6 +1,6 @@
 function [outputArray, numFeatures] = GetDataUsingModel(inputs, isLoadSeparatedData, varargin)
     try       
-        defaultRange = 'D115:W115';    
+        defaultRange = 'D5:W5';    
         switch nargin
             case 2
                 xlRange = defaultRange;
