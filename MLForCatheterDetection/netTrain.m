@@ -6,10 +6,10 @@ addpath(genpath(pwd));
 % Initial variables
 isVisual = 0;
 useNormalizedData = 1;      % use normalized type of data (1) or not (0)
-sfsType = 'KNN';           % Full, DA, SVM, KNN, FSRA, BDFS, OFS, SBFS
-numFeats = 12;              % 20 (Full), 12 and 6    
-netType = 'recurrent';        % 'feed-forward', 'cascade', 'recurrent'
-netSize = 'small';          % small, mid, big
+sfsType = 'DA';             % Full, DA, SVM, KNN, FSRA, BDFS, OFS, SBFS
+numFeats = 6;               % 20 (Full), 12 and 6    
+netType = 'feed-forward';   % 'feed-forward', 'cascade', 'recurrent'
+netSize = 'mid';            % small, mid, big
 trainingFunction = 'BR';    % training function  
 isGPU = 'no';               % train a net on GPUs
 isParallel = 'no';          % train a net on a parallel pool
