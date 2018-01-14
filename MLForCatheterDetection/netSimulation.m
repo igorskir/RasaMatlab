@@ -3,7 +3,6 @@ clear all;  close all; clc;
 addpath(genpath(pwd));
 
 % Initial variables
-isVisual = 0;
 useNormalizedData = 1;      % use normalized type of data (1) or not (0)
 isLoadSeparatedData = 0;    % separated data = 1, not separated data = 0
 sfsType = 'Full';           % Full, DA, SVM, KNN, FSRA, BDFS, OFS, SBFS

@@ -1,5 +1,6 @@
 function output = GetSeparatedRegions(BW, method, ax)
-se = strel('disk', 2);
+% se = strel('disk', 2); %
+% se = strel('ball', 3, 0, 0);
 D = -bwdist(~BW, method);
     if strcmp(ax, 'short')   
         D(~BW) = Inf;
@@ -14,6 +15,6 @@ D = -bwdist(~BW, method);
         output = BW;
         output(L == 0) = 0;
     end
-output = imopen(output, se);
+% output = imopen(output, se);
 end
 

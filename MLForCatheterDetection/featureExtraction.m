@@ -94,7 +94,7 @@ for nSlice = sliceRange
                           'Centroid', [], ...
                           'Distance', []);
 
-    %% Filling holes
+    %% Filling the holes
     if isFill == 1
         BWfill = imfill(BW, 'holes');
     elseif isFill == 0
@@ -113,6 +113,7 @@ for nSlice = sliceRange
     end
     vars.fillingHoles = {'str1', 'str2'};
     clear(vars.fillingHoles{:});
+    
     %% Main feature analysis
     featuresFill = regionprops(Lfill,  img, {'Area', ... 
                                              'PixelValues', ...
@@ -154,6 +155,7 @@ for nSlice = sliceRange
     end
     vars.mainFeatureAnalysis = {'count', 'PosX', 'PosY', 'str', 'pmSymbol'};
     clear(vars.mainFeatureAnalysis{:});
+    
     %% GLCM analysis
     if ~isempty(featuresFill)
         glcm = cell(1, numFill);
@@ -177,6 +179,7 @@ for nSlice = sliceRange
     vars.glcmAnalysis = {'i', 'rect', 'str1', 'str2', 'croppedImg', 'colorScheme', ...
                          'posX', 'posY', 'str', 'tempVectorImg'};
     clear(vars.glcmAnalysis{:});
+    
     %% Merging all features into one structure 
     numFeatures = numel(featuresFill);
     for count = 1:numFeatures
@@ -232,6 +235,7 @@ for nSlice = sliceRange
     featuresTemp = rmfield(featuresTemp,fieldsToDel);
     close(hFig);
     disp(str1);
+    
     % Removing NaNs
     fn = fieldnames(featuresTemp);
     for i = 1:numel(fn) 
