@@ -6,14 +6,14 @@ addpath(genpath(pwd));
 % Settings
 net = 'ffb';                    % ffb, cfb, r
 filename = '7 timeframe.mat';   % '7 timeframe.mat' or '17 timeframe.mat'
-ax = 'short';
+ax = 'short';                   % short, long1, long2
 isFill = 0;                     % filling the holes in the objects (1) or not(0)
 isSeparate = 0;                 % perform separation of catheter and pigtail (1) or not (0)
 isNormalize = 1;                % normolized the data within the column (1) or not (0)
 isOverlaySegmentation = 1;      % superimpose catheter segmentation (1) or not (0)
 isOverlayBbox = 1;              % superimpose catheter bounding box (1) or not (0)
-isSaveImages = 0;               % saving images into the folder (1, NOTE: isVisual = 1) or not (0)        
-isVisual = 0;                   % 
+isSaveImages = 1;               % saving images into the folder (1, NOTE: isVisual = 1) or not (0)        
+isVisual = 1;                   % visualization on (1) and off (0)
 openArea = 15;
 scrSz = get(0, 'Screensize');
 
@@ -224,5 +224,5 @@ for nSlice = 1:size(I,3)
         saveas(gcf,num2str(nSlice),'tiff');
         cd ..\..
     end
-    disp('done');
+    fprintf('%.d slice processed \n', nSlice);
 end
