@@ -12,7 +12,7 @@ isSeparate = 0;                 % perform separation of catheter and pigtail (1)
 isNormalize = 1;                % normolized the data within the column (1) or not (0)
 isOverlaySegmentation = 1;      % superimpose catheter segmentation (1) or not (0)
 isOverlayBbox = 1;              % superimpose catheter bounding box (1) or not (0)
-isSaveImages = 1;               % saving images into the folder (1, NOTE: isVisual = 1) or not (0)        
+isSaveImages = 0;               % saving images into the folder (1, NOTE: isVisual = 1) or not (0)        
 isVisual = 1;                   % visualization on (1) and off (0)
 openArea = 15;
 scrSz = get(0, 'Screensize');
@@ -35,16 +35,19 @@ switch net
         disp('Choose a network properly')
 end
 cd ..\..
-% processingTime = zeros(size(I,3), 9);
+
+processingTime = zeros(size(I,3), 9);
 for nSlice = 1:size(I,3)
-    tic;
     img = GetImage(I, nSlice, ax);
     
-    %% Thresholding and mathematical morphology
+    %% Thresholding
+    tic;
     [level, ~] = GetThresholdingLevel(img, 'ImprovedOtsu');
     BW = imbinarize(img, level);
     processingTime(nSlice,1) = toc;    
     tic;
+    
+    %% Mathematical morphology
     BW = bwareaopen(BW, openArea);
     if isSeparate == 1
         BW = GetSeparatedRegions(BW, method, ax);
