@@ -5,7 +5,7 @@ currentFolder = pwd;
 addpath(genpath(pwd));
 
 %% Global variables
-isSeparate = 0; % perform separation of catheter and pigtail (1) or not
+isSeparate = 1; % perform separation of catheter and pigtail (1) or not
 isLabel = 1; % labeling (1) or without labeling (0)
 isNormalize = 1; % normalization (1) or no normaliztion (0)
 isVisual = 1; % visualize (1) or not(0)
@@ -13,7 +13,7 @@ isFill = 0; % filling the holes (1) or not (0)
 openArea = 15;
 method = 'euclidean';
 
-nTimeframe = 14; %9
+nTimeframe = 9; % 9 tf and 49/92 slice
 ax = 'short'; % 'long1', 'long2'
     
 %XLS reading
@@ -49,18 +49,21 @@ I = squeeze(X(:,:,:,nTimeframe));
 % Binarization
 for nSlice = sliceRange
     img = GetImage(I, nSlice, ax);
+    imshow(img, 'InitialMagnification', 'fit');
     % level = threshTool(img)/255;
-%     [level,EM] = graythresh(img);
+    % [level,EM] = graythresh(img);
     [level, EM] = GetThresholdingLevel(img, 'ImprovedOtsu');
     BW = imbinarize(img, level);
+    imshow(BW, 'InitialMagnification', 'fit');
     BW = bwareaopen(BW, openArea);
+    imshow(BW, 'InitialMagnification', 'fit');
     if isSeparate == 1
         BW = GetSeparatedRegions(BW, method, ax);
-    else
-%         se = strel('disk', 2);
-        se = strel('ball', 3, 0, 0);
-        BW = imopen(BW, se);
     end
+    imshow(BW, 'InitialMagnification', 'fit');
+    se = strel('ball', 2, 0, 0);
+    BW = imopen(BW, se);
+    imshow(BW, 'InitialMagnification', 'fit');
     if isVisual == 0
         str1 = sprintf('Binarized image');
         str2 = sprintf('Thresholding level: %.3f (%d out of 255)', level, uint8(level*255));
