@@ -72,9 +72,11 @@ if nargin == 6
     AddTitle(str)
     hold off;
     legend('Catheter PDF', 'Tissue PDF')
-    xlabel('Data', 'FontName', 'Times New Roman');
-    ylabel('PDF', 'FontName', 'Times New Roman');
-    set(ax,'FontName','Times New Roman','FontSize',12);
+%     xlabel('Data', 'FontName', 'Times New Roman');
+    xlabel('Standard deviation', 'FontName', 'Times New Roman', 'FontSize', 26);
+
+    ylabel('PDF', 'FontName', 'Times New Roman', 'FontSize', 26);
+    set(ax,'FontName','Times New Roman','FontSize', 26);
     grid on
     set(gcf, 'Position', [1, scrSz(2), scrSz(3), scrSz(4)],...
     'Color', 'w', 'name', 'Score', 'numbertitle', 'off');
