@@ -9,9 +9,9 @@ for i = 1:numel(binCounts)
     scoresSBFS(i,1) = binCounts(i);
     for j = 2:featureCount
         isDiscrete = IsDiscrete(dataCatheter(:,j));
-        scoresSBFS(i,j) = ShowPDFDifference(dataTissue(:,j), dataCatheter(:,j), binCounts(i), binCounts(i), isDiscrete);
-%         scores(i,j) = ShowPDFDifference(dataTissue(:,j), dataCatheter(:,j), binCounts(i), binCounts(i), isDiscrete, 'sPlot');
-%         close
+%         scoresSBFS(i,j) = ShowPDFDifference(dataTissue(:,j), dataCatheter(:,j), binCounts(i), binCounts(i), isDiscrete);
+        scores(i,j) = ShowPDFDifference(dataTissue(:,j), dataCatheter(:,j), binCounts(i), binCounts(i), isDiscrete, 'sPlot');
+        close
     end
 end
 

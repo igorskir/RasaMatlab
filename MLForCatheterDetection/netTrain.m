@@ -7,7 +7,7 @@ addpath(genpath(pwd));
 isVisual = 0;
 useNormalizedData = 1;      % use normalized type of data (1) or not (0)
 sfsType = 'Full';           % Full, DA, SVM, KNN, FSRA, BDFS, OFS, SBFS
-numFeats = 6;               % 20 (Full), 12 and 6    
+numFeats = 12;              % 20 (Full), 12 and 6    
 netType = 'feed-forward';   % 'feed-forward', 'cascade', 'recurrent'
 netSize = 'mid';            % small, mid, big
 trainingFunction = 'BR';    % training function  

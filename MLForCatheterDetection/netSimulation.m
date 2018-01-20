@@ -6,7 +6,7 @@ addpath(genpath(pwd));
 useNormalizedData = 1;      % use normalized type of data (1) or not (0)
 isLoadSeparatedData = 0;    % separated data = 1, not separated data = 0
 sfsType = 'Full';           % Full, DA, SVM, KNN, FSRA, BDFS, OFS, SBFS
-numFeats = 12;
+numFeats = 6;
 
 % Load the data
 if isLoadSeparatedData == 0
