@@ -1,14 +1,15 @@
 %% Initial state
-% clear all;  close all; clc;
+clear all;  close all; clc;
 set(0, 'DefaultFigureWindowStyle', 'normal');
 addpath(genpath(pwd));
 
 % Settings
-net = 'ffb';                    % ffb, cfb, r
-filename = '17 timeframe.mat';   % '7 timeframe.mat' or '17 timeframe.mat'
+net = 'cfb';                    % ffb, cfb, r
+filename = '7 timeframe.mat';   % '7 timeframe.mat' or '17 timeframe.mat'
 ax = 'short';                   % short, long1, long2
+method = 'euclidean';           % method for distance transform
 isFill = 0;                     % filling the holes in the objects (1) or not(0)
-isSeparate = 0;                 % perform separation of catheter and pigtail (1) or not (0)
+isSeparate = 1;                 % perform separation of catheter and pigtail (1) or not (0)
 isNormalize = 1;                % normolized the data within the column (1) or not (0)
 isOverlaySegmentation = 1;      % superimpose catheter segmentation (1) or not (0)
 isOverlayBbox = 1;              % superimpose catheter bounding box (1) or not (0)
@@ -43,7 +44,7 @@ end
 cd ..\..
 
 processingTime = zeros(size(I,3), 9);
-for nSlice = 1:size(I,3)
+for nSlice = 38:size(I,3)
     img = GetImage(I, nSlice, ax);
     
     %% Thresholding
@@ -55,11 +56,14 @@ for nSlice = 1:size(I,3)
     
     %% Mathematical morphology
     BW = bwareaopen(BW, openArea);
+%     imshow(BW, 'InitialMagnification', 'fit');
     if isSeparate == 1
         BW = GetSeparatedRegions(BW, method, ax);
     end
-    se = strel('ball', 3, 0, 0);
+%     imshow(BW, 'InitialMagnification', 'fit');
+    se = strel('ball', 2, 0, 0);
     BW = imopen(BW, se);
+%     imshow(BW, 'InitialMagnification', 'fit');
     processingTime(nSlice,2) = toc;
     %% Filling the holes
     tic;

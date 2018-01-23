@@ -2,14 +2,13 @@ function output = GetSeparatedRegions(BW, method, ax)
 % se = strel('disk', 2); %
 % se = strel('ball', 2, 0, 0);
 D = -bwdist(~BW, method);
-imshow(D, 'InitialMagnification', 'fit');
+% imshow(D, 'InitialMagnification', 'fit');
     if strcmp(ax, 'short')   
         D(~BW) = Inf;
         L = watershed(D);
 %         imshow(label2rgb(L, colormap(brewermap([],'Set3'))), 'InitialMagnification', 'fit')
         L(~BW) = 0;
 %         imshow(label2rgb(L, colormap(brewermap([],'Set3'))), 'InitialMagnification', 'fit')
-        imshow(L, 'InitialMagnification', 'fit');
         output = logical(L);
     elseif strcmp(ax, 'long') || strcmp(ax, 'long1') || strcmp(ax, 'long2')
         mask = imextendedmin(D, 1);
