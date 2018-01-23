@@ -20,7 +20,7 @@ limits = struct('maxBlobsArea', 0,... % 5
                 'minCorrelation', 0.55, 'maxCorrelation', 0.97,... % 0.55 0.97
                 'minEnergy', 0.002, 'maxEnergy', 0.112,... % 0.002 0.112
                 'minHomogeneity', 0.07, 'maxHomogeneity', 0.27,... % 0.07 0.27
-                'minVolume', 3000, 'maxVolume', 10000); % 300 10000
+                'minVolume', 1900, 'maxVolume', 10000); % 300 10000
 
 % Ellipse data
 [Xmesh, Ymesh] = meshgrid(1:sz(1), 1:sz(2));
@@ -30,7 +30,7 @@ featuresEllipse = struct('CenterX', [], 'CenterY', [],...
                          'Length', [], 'Width', [],...
                          'Theta',[]);
 BWfull = zeros(sz(1), sz(2), sz(3), sz(4));
-
+objectInfo = zeros(1,5);
 for nTimeframe = 1:sz(4)
     BWr = zeros(sz(1), sz(2), sz(3));
     I = squeeze(X(:,:,:,nTimeframe));
@@ -96,6 +96,7 @@ for nTimeframe = 1:sz(4)
             BWroi((1:size(rotImg,1)) + PosY,(1:size(rotImg,2)) + PosX,:) = rotImg;
         end
         BWr(:,:,nSlice) = BWroi;
+        CCr = bwconncomp(BWr);
         BWroi = zeros(sz(1), sz(2));
         BWroi = logical(BWroi);
     end
@@ -116,6 +117,18 @@ for nTimeframe = 1:sz(4)
         BWvol = zeros();
     end
     BWs = smooth3(BWvol, 'box', [3,3,5]);
+    CCs = bwconncomp(BWs);
+    CCvol = bwconncomp(BWvol);
+    objectInfo(nTimeframe,1) = nTimeframe;
+    objectInfo(nTimeframe,2) = CCr.NumObjects;
+    objectInfo(nTimeframe,3) = CCvol.NumObjects;
+    objectInfo(nTimeframe,4) = CCs.NumObjects;
+    for i = 1:CCr.NumObjects
+        [temp , ~] = size(CCr.PixelIdxList{1,i});
+        objectVolume(1,i) = temp;
+    end
+    objectInfo(nTimeframe,5) = min(objectVolume);
+    objectInfo(nTimeframe,6) = max(objectVolume);
     BWfull(:,:,:,nTimeframe) = BWs;
 end
 toc;
