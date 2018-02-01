@@ -49,21 +49,21 @@ I = squeeze(X(:,:,:,nTimeframe));
 % Binarization
 for nSlice = sliceRange
     img = GetImage(I, nSlice, ax);
-    imshow(img, 'InitialMagnification', 'fit');
+%     imshow(img, 'InitialMagnification', 'fit');
     % level = threshTool(img)/255;
     % [level,EM] = graythresh(img);
     [level, EM] = GetThresholdingLevel(img, 'ImprovedOtsu');
     BW = imbinarize(img, level);
-    imshow(BW, 'InitialMagnification', 'fit');
+%     imshow(BW, 'InitialMagnification', 'fit');
     BW = bwareaopen(BW, openArea);
-    imshow(BW, 'InitialMagnification', 'fit');
+%     imshow(BW, 'InitialMagnification', 'fit');
     if isSeparate == 1
         BW = GetSeparatedRegions(BW, method, ax);
     end
-    imshow(BW, 'InitialMagnification', 'fit');
+%     imshow(BW, 'InitialMagnification', 'fit');
     se = strel('ball', 2, 0, 0);
     BW = imopen(BW, se);
-    imshow(BW, 'InitialMagnification', 'fit');
+%     imshow(BW, 'InitialMagnification', 'fit');
     if isVisual == 0
         str1 = sprintf('Binarized image');
         str2 = sprintf('Thresholding level: %.3f (%d out of 255)', level, uint8(level*255));
@@ -212,10 +212,14 @@ for nSlice = sliceRange
             text(posX, posY, char(str), 'FontSize', 18, 'FontName', 'Times New Roman', 'Color', 'g');
 %             rectangle('Position', featuresFill(count).BoundingBox, 'EdgeColor','c');
         end
-        set(gcf, 'Position', [scrSz(3), 0, scrSz(3), scrSz(4)],...
-            'Color', 'w', 'name', str1, 'numbertitle', 'off'); % FOR THE SECOND DISPLAY ONLY
+%         set(gcf, 'Position', [scrSz(3), 0, scrSz(3), scrSz(4)],...
+%             'Color', 'w', 'name', str1, 'numbertitle', 'off'); % FOR THE SECOND DISPLAY ONLY
+        set(gcf, 'Position', [0, scrSz(2), scrSz(3), scrSz(4)],...
+            'Color', 'w', 'name', str1, 'numbertitle', 'off'); % FOR THE SECOND DISPLAY ONLY 
 %         set(gcf, 'Position', [scrSz(3)/2, scrSz(2), scrSz(3)/2, scrSz(4)],...
-%             'Color', 'w', 'name', str1, 'numbertitle', 'off'); % FOR ONE DISPLAY ONLY    
+%             'Color', 'w', 'name', str1, 'numbertitle', 'off'); % FOR ONE DISPLAY ONLY   
+        set(gcf, 'Position', [0, scrSz(2), scrSz(3), scrSz(4)],...
+            'Color', 'w', 'name', str1, 'numbertitle', 'off'); % FOR THE SECOND DISPLAY ONLY 
         hold off
     end
     [featuresTemp(1:numFeatures).Presence] = deal(0);
