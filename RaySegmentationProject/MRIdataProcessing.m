@@ -1,6 +1,7 @@
 clc;
 clear;
 close all;
+addpath(genpath(pwd))
 % import square segmentation library
 % loading sol data
 fileNum=11;
@@ -19,7 +20,7 @@ points=[];
 dTetta=pi/2;
 dFi=pi/8;
 
-Visualize=true; % vizualize images & masks
+Visualize=false; % vizualize images & masks
 %%
 results=[];
 for slice=1:size(masks,1)
