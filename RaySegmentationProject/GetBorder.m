@@ -2,21 +2,16 @@ function [ index ] = GetBorder( ray, delta, width,level, maxDist)
 %looking for the the border on a ray
 %width - width of approximation window 
 raw=ray;
-ray=smooth(ray,10);
+%ray=smooth(ray,10);
+width = 2;
 %plot(ray);
 i=width+1;
 x=0:delta:(2*width)*delta;
-k=0;
 b=0;
 s=sum(raw(1:i-1));
 while((i<=(numel(ray)-width)))
     y=ray(i-width:i+width);
-    %coeffs=[1 1];
-    %coeffs=polyfit(x',y,1); %coeffs of linear approximation
-    %k=abs(coeffs(1));
-    k=0;
-    %k
-    
+    k=LSM(y');    
     if(k>=level || abs(s/(i-1)-raw(i))>maxDist) 
         break; 
     end %threshold level;

@@ -17,7 +17,7 @@ image3D=permute(CT.volumes,[2 1 3]);
 
 %% Histogram modification
 p = twomodegauss(0.1, 0.05, 0.3, 0.05, 1, 0.07, 0.002);
-image3D=histeq(image3D,p);
+%image3D=histeq(image3D,p);
 
 %% Setting  parameters
 points=[];
@@ -26,6 +26,7 @@ dTetta=pi/2;
 dFi=pi/16;
 
 %% Ray generation and processing
+imtool(squeeze(image3D(:,:,startPoint(3))));
 points=EmitRays(double(image3D),points,startPoint,dTetta,dFi);
 
 %% Marking up 3D Image
@@ -35,6 +36,7 @@ end
 
 %% Show the results
 %implay(image3D,2);
+figure;
 imtool(squeeze(image3D(:,:,startPoint(3))));
 %K = convhulln(points(:,1:3));
 %h=trisurf(K,points(:,1),points(:,2),points(:,3));

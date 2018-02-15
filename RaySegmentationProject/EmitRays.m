@@ -10,13 +10,13 @@ x0=startPoint(1); % extracting values...
 y0=startPoint(2);
 z0=startPoint(3);
 %params for border detection
-level=6.2; % condition for linear approximation coeffs
+level=4.5; % condition for linear approximation coeffs
 width=2; % width of a window for calculating approximation coeffs
 delta=1;
-maxDist=21.2;
+maxDist=12.3;
 
 for tetta=pi/2:dTetta:pi/2
-    for fi=(2*pi-dFi):-dFi:0  
+    for fi=0:dFi:(2*pi-dFi)  
         % here we need to check current [tetta fi] if its not excepted direction
         % not released yet
         ray=Ray(image3D, startPoint,fi,tetta,delta); % creating ray for current direction

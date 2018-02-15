@@ -17,9 +17,9 @@ masks=GetMasks(contours,[height, width]);
 %% Setting  parameters
 points=[];
 dTetta=pi/2;
-dFi=pi/16;
+dFi=pi/8;
 
-Visualize=false; % vizualize images & masks
+Visualize=true; % vizualize images & masks
 %%
 results=[];
 for slice=1:size(masks,1)
@@ -44,8 +44,10 @@ for slice=1:size(masks,1)
             error = 0; % need for sq seg. unusable for ray seg
             image3D =zeros(size(img, 1), size(img, 2), 2);
             image3D(:,:,1) = img';
+            points = [];
             [points] = EmitRays(double(image3D),points,startPoint,dTetta,dFi);
             pointsForSpline = points(:,1:2); % only for xy coords
+            pointsForSpline(end+1,:)= pointsForSpline(1,:);
             spline = cscvn(pointsForSpline');
             rayMask = Spline2Mask(spline,size(img));
             time=toc();
@@ -57,8 +59,8 @@ for slice=1:size(masks,1)
             if(Visualize)
                 imshow(img);
                 figure;
-                %imshow(mask);
-                %figure;
+                imshow(mask);
+                figure;
                 imshow(rayMask);
                 %ginput(1);
                 close all;
@@ -79,9 +81,13 @@ for i=1:size(results,1)
 end
 total=total/totalCount;
 total
+stdTotal = std(results(:,4));
+stdTotal
 failCount
 imhist(results(:,4));
 meanTime=mean(results(:,3));
 meanTime
+stdTime = std(results(:,3));
+stdTime
 
 
