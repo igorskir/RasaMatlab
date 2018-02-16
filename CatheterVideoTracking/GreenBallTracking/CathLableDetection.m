@@ -25,13 +25,13 @@ flag = false;
 baseR = 207;
 baseG = 173;
 baseB = 78;
-imgWithCross = zeros(vidHeight,vidWidth,3,nFrames);
+imgWithCross = zeros(vidHeight,vidWidth,3,nFrames,'uint8');
 % Extract color components
 while hasFrame(videoReader)
     currrentFrame = readFrame(videoReader);
     cR = double(currrentFrame(:,:,1));
     cG = double(currrentFrame(:,:,2));
-    cB = double(currrentFrame(:,:,3));
+    cB =double(currrentFrame(:,:,3));
     flag = false;
     for i = 10 : vidHeight-10
         for j = 10 : vidWidth-10
@@ -47,12 +47,15 @@ while hasFrame(videoReader)
             break;
         end
     end
-    imgWithCross(:,:,:,numFrame) = currrentFrame;%setCrosshair(currrentFrame, [yPos(numFrame) xPos(numFrame)]);
+    imgWithCross(:,:,:,numFrame) = setCrosshair(currrentFrame, [yPos(numFrame) xPos(numFrame)]);
     numFrame = numFrame + 1;
 end
 %%
 for i=1:size(imgWithCross,4)
-    imshow(squeeze(imgWithCross(:,:,:,i))/255);
+    imshow(squeeze(imgWithCross(:,:,:,i)));
 end
+
+%%
+implay(imgWithCross,30);
 
 
