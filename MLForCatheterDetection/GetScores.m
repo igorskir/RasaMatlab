@@ -3,6 +3,7 @@ clc; clear;
 addpath('MAT files');
 load('data (not separ.).mat');
 binCounts = 10:2:70;
+% binCounts = 6;
 featureCount = size(dataCatheter,2);
 scoresSBFS = zeros(numel(binCounts),featureCount);
 for i = 1:numel(binCounts)

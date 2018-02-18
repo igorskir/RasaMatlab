@@ -63,8 +63,11 @@ if ~isDiscrete
     for i=1:binCount
         middleVals(i)=(edges(i)+edges(i+1))/2;
         floatStep=edges(i+1)-edges(i);
-        bins(i)=bins(i)/(numel(data)*floatStep);
+        bins(i)=bins(i)/(numel(data)*floatStep); % comment for the StemPlot
     end
+%     bins(end+1) = bins(end); % uncomment for the StemPlot
+%     StemPlot(edges, bins);   % uncomment for the StemPlot
+
 %     step = (maxElement - minElement)/binCount;
 %     edges = minElement:step:maxElement;
 %     bins = zeros(binCount, 1);
