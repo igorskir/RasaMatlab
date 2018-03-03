@@ -6,8 +6,8 @@ addpath(genpath(pwd));
 % Initial variables
 isVisual = 0;
 useNormalizedData = 1;      % use normalized type of data (1) or not (0)
-sfsType = 'Full';           % Full, DA, SVM, KNN, FSRA, BDFS, OFS, SBFS
-numFeats = 12;              % 20 (Full), 12 and 6    
+sfsType = 'BDFS';           % Full, DA, SVM, KNN, FSRA, BDFS, OFS, SBFS
+numFeats = 6;               % 20 (Full), 12 and 6    
 netType = 'feed-forward';   % 'feed-forward', 'cascade', 'recurrent'
 netSize = 'mid';            % small, mid, big
 trainingFunction = 'BR';    % training function  
@@ -81,7 +81,8 @@ switch sfsType
 end
 
 % Get the data based on the used model
-[x, numFeatures] = GetDataUsingModel(x', isLoadSeparatedData, modelRange);
+[x, numFeatures] = GetDataUsingModel(x', isLoadSeparatedData, 'D25:W25'); % Only for tesing different combinations
+% [x, numFeatures] = GetDataUsingModel(x', isLoadSeparatedData, modelRange); % Uncomment for usual using
 x = x';
 % Use of the particular model
 % model = zeros(1,20);
@@ -256,7 +257,7 @@ netResult = {accuracyVals stopVal};
 fprintf('Catheter Classification Rate: %.2f%%\n', 100*accuracyVals(1,2));
 fprintf('Catheter Misclassification Rate: %.2f%%\n', 100*accuracyVals(1,6));
 
-% Save net-file
+%% Save net-file
 layersName = [num2str(hiddenLayerSize(1,1)), ' ', num2str(hiddenLayerSize(1,2)), ' ', num2str(hiddenLayerSize(1,3))];
 if strcmp(sfsType, 'Full')
     netFilename = [netType, ' ', num2str(numFeatures), '_features [', layersName, ']'];
